@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流量工厂 - 选题池</title>
+  <style>
+    body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
+    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
+    .nav a.active { background: #1d4ed8; color: #fff; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; }
+    .primary { background: #1d4ed8; color: #fff; }
+    .disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .actions input, .actions textarea, .actions select {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      width: min(620px, 100%);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
+    .status { background: #ffedd5; border-left: 4px solid #f97316; padding: 10px 12px; }
+    .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="nav">
+      <a href="/discovery">发现台</a>
+      <a class="active" href="/topics">选题池</a>
+      <a href="/contents">内容工坊</a>
+      <a href="/images">图片工坊</a>
+      <a href="/checks">发布检查</a>
+      <a href="/retros">复盘台</a>
+    </nav>
+
+    <h1>选题池</h1>
+
+    <section class="card">
+      <h2>当前对象区</h2>
+      <p>当前对象：选题（Topic）</p>
+      <p>上游依赖：信号（Signal）</p>
+    </section>
+
+    <section class="card">
+      <h2>列表区占位</h2>
+      <p>选题列表/详情占位：后续接线后展示已落库选题及信号来源。</p>
+    </section>
+
+    <section class="card actions">
+      <h2>主动作按钮区</h2>
+      <p>动作：开始写稿（调用 `/api/topics/{topic_id}/advance-to-content`）</p>
+      <label>
+        选题 ID（必填）
+        <input id="topic-id-input" type="text" placeholder="例如：top_xxx">
+      </label>
+      <label>
+        内容类型（必填）
+        <select id="variant-type-input">
+          <option value="post">post</option>
+          <option value="script">script</option>
+        </select>
+      </label>
+      <label>
+        平台（必填）
+        <input id="platform-input" type="text" value="xiaohongshu">
+      </label>
+      <label>
+        标题（必填）
+        <input id="content-title-input" type="text" placeholder="输入内容标题">
+      </label>
+      <label>
+        正文（必填）
+        <textarea id="content-body-input" rows="4" placeholder="输入内容正文"></textarea>
+      </label>
+      <button id="topic-to-content-btn" class="primary disabled" type="button" disabled>开始写稿</button>
+      <div id="action-result" class="result-panel">等待动作执行。</div>
+    </section>
+
+    <section class="status">
+      <h2>状态提示区</h2>
+      <p>不可跳步占位：无信号时不允许创建选题，下游内容工坊入口应保持空状态或禁用。</p>
+    </section>
+
+    <section class="empty">
+      <h2>错误/空状态占位</h2>
+      <p>未选择上游信号，当前只能查看空状态。</p>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const topicIdInput = document.getElementById("topic-id-input");
+      const variantTypeInput = document.getElementById("variant-type-input");
+      const platformInput = document.getElementById("platform-input");
+      const titleInput = document.getElementById("content-title-input");
+      const bodyInput = document.getElementById("content-body-input");
+      const actionButton = document.getElementById("topic-to-content-btn");
+      const resultPanel = document.getElementById("action-result");
+
+      const query = new URLSearchParams(window.location.search);
+      if (!topicIdInput.value && query.get("topic_id")) {
+        topicIdInput.value = query.get("topic_id");
+      }
+
+      function setResult(payload) {
+        if (!payload) {
+          resultPanel.textContent = "接口无响应。";
+          return;
+        }
+        resultPanel.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      function syncDisabled() {
+        const disabled =
+          !topicIdInput.value.trim() ||
+          !variantTypeInput.value.trim() ||
+          !platformInput.value.trim() ||
+          !titleInput.value.trim() ||
+          !bodyInput.value.trim();
+        actionButton.disabled = disabled;
+        actionButton.classList.toggle("disabled", disabled);
+      }
+
+      async function runAction(action, payload) {
+        const response = await fetch(`/web/actions/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        return response.json();
+      }
+
+      topicIdInput.addEventListener("input", syncDisabled);
+      variantTypeInput.addEventListener("change", syncDisabled);
+      platformInput.addEventListener("input", syncDisabled);
+      titleInput.addEventListener("input", syncDisabled);
+      bodyInput.addEventListener("input", syncDisabled);
+      syncDisabled();
+
+      actionButton.addEventListener("click", async function () {
+        const response = await runAction("topic_to_content", {
+          topic_id: topicIdInput.value.trim(),
+          variant_type: variantTypeInput.value.trim(),
+          platform: platformInput.value.trim(),
+          title: titleInput.value.trim(),
+          body: bodyInput.value.trim(),
+        });
+        setResult(response);
+        if (response.ok) {
+          window.location.href = `/contents?content_variant_id=${encodeURIComponent(response.data.id)}&topic_id=${encodeURIComponent(topicIdInput.value.trim())}`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

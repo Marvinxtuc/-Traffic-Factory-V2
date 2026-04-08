@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流量工厂 - 发布检查</title>
+  <style>
+    body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
+    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
+    .nav a.active { background: #1d4ed8; color: #fff; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .result { padding: 12px; border-radius: 6px; color: #fff; font-weight: 700; }
+    .pass { background: #15803d; }
+    .warn { background: #d97706; }
+    .block { background: #b91c1c; }
+    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; }
+    .primary { background: #1d4ed8; color: #fff; }
+    .warn-btn { background: #f97316; color: #fff; }
+    .disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .actions input, .actions textarea {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      width: min(620px, 100%);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .snapshot-item { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 10px; }
+    .snapshot-item strong { display: block; color: #334155; margin-bottom: 4px; }
+    .risk-box { margin-top: 10px; background: #fff7ed; border: 1px solid #fdba74; border-radius: 6px; padding: 8px 10px; color: #9a3412; }
+    .hint-box { margin-top: 10px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; padding: 8px 10px; color: #991b1b; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; font-size: 13px; text-align: left; }
+    th { background: #f1f5f9; color: #334155; }
+    .status { background: #fee2e2; border-left: 4px solid #b91c1c; padding: 10px 12px; }
+    .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="nav">
+      <a href="/discovery">发现台</a>
+      <a href="/topics">选题池</a>
+      <a href="/contents">内容工坊</a>
+      <a href="/images">图片工坊</a>
+      <a class="active" href="/checks">发布检查</a>
+      <a href="/retros">复盘台</a>
+    </nav>
+
+    <h1>发布检查</h1>
+
+    <section class="card">
+      <h2>当前对象区</h2>
+      <p>当前对象：发布检查记录（PublishCheck）</p>
+      <p>上游依赖：内容版本（必填）+ 图片资产（有图时必填）</p>
+    </section>
+
+    <section class="card">
+      <h2>总结果区</h2>
+      <div class="result-grid">
+        <div class="result pass">通过（允许进入下一步）</div>
+        <div class="result warn">警告（允许进入下一步，需记录风险）</div>
+        <div class="result block">拦截（禁止进入下一步）</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>关键状态结构化视图</h2>
+      <div class="snapshot-grid">
+        <div class="snapshot-item"><strong>检查结果</strong><span id="check-result-value">未加载</span></div>
+        <div class="snapshot-item"><strong>检查版本号</strong><span id="check-version-value">未加载</span></div>
+        <div class="snapshot-item"><strong>记录状态</strong><span id="record-status-value">未加载</span></div>
+        <div class="snapshot-item"><strong>是否最新有效检查记录</strong><span id="latest-active-value">未加载</span></div>
+        <div class="snapshot-item"><strong>是否重检后的结果</strong><span id="recheck-flag-value">未加载</span></div>
+        <div class="snapshot-item"><strong>当前检查 ID</strong><span id="selected-check-id-value">未加载</span></div>
+      </div>
+      <div class="risk-box">
+        <strong>风险说明（警告时必看）</strong>
+        <div id="risk-note-value">无</div>
+      </div>
+      <div id="need-recheck-hint" class="hint-box" style="display: none;">检测到旧检查已失效，必须重新检查后才能使用最新有效结果。</div>
+    </section>
+
+    <section class="card">
+      <h2>重检历史（同一内容版本）</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>检查 ID</th>
+            <th>版本号</th>
+            <th>结果</th>
+            <th>记录状态</th>
+            <th>最新有效</th>
+          </tr>
+        </thead>
+        <tbody id="history-body">
+          <tr><td colspan="5">暂无检查历史</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card actions">
+      <h2>主动作按钮区</h2>
+      <label>
+        发布检查 ID（可选，优先）
+        <input id="check-id-input" type="text" placeholder="例如：chk_xxx">
+      </label>
+      <label>
+        内容版本 ID（可选，用于加载同内容检查历史）
+        <input id="content-id-input" type="text" placeholder="例如：cnt_xxx">
+      </label>
+      <label>
+        复盘摘要（用于通过/警告进入复盘）
+        <textarea id="retro-summary-input" rows="3" placeholder="输入复盘摘要"></textarea>
+      </label>
+      <button id="check-recheck-btn" class="warn-btn disabled" type="button" disabled>重新检查</button>
+      <button id="check-rollback-btn" class="warn-btn disabled" type="button" disabled>回退修改</button>
+      <button id="check-to-retro-btn" class="primary disabled" type="button" disabled>通过/警告后进入复盘</button>
+      <div id="action-result" class="result-panel">等待动作执行。</div>
+    </section>
+
+    <section class="status">
+      <h2>状态提示区</h2>
+      <p>发布检查是强闸门。拦截状态下不能进入复盘；内容或图片修改后旧检查失效，必须新增检查记录且旧记录不得覆盖。</p>
+    </section>
+
+    <section class="empty">
+      <h2>错误/空状态占位</h2>
+      <p>未选择可检查对象时，只显示空状态，不开放下游动作。</p>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const checkIdInput = document.getElementById("check-id-input");
+      const contentIdInput = document.getElementById("content-id-input");
+      const retroSummaryInput = document.getElementById("retro-summary-input");
+      const recheckButton = document.getElementById("check-recheck-btn");
+      const rollbackButton = document.getElementById("check-rollback-btn");
+      const toRetroButton = document.getElementById("check-to-retro-btn");
+      const resultPanel = document.getElementById("action-result");
+      const historyBody = document.getElementById("history-body");
+      const needRecheckHint = document.getElementById("need-recheck-hint");
+
+      const checkResultValue = document.getElementById("check-result-value");
+      const checkVersionValue = document.getElementById("check-version-value");
+      const recordStatusValue = document.getElementById("record-status-value");
+      const latestActiveValue = document.getElementById("latest-active-value");
+      const recheckFlagValue = document.getElementById("recheck-flag-value");
+      const selectedCheckIdValue = document.getElementById("selected-check-id-value");
+      const riskNoteValue = document.getElementById("risk-note-value");
+
+      const query = new URLSearchParams(window.location.search);
+      if (!checkIdInput.value && query.get("check_id")) {
+        checkIdInput.value = query.get("check_id");
+      }
+      if (!contentIdInput.value && query.get("content_variant_id")) {
+        contentIdInput.value = query.get("content_variant_id");
+      }
+
+      let selectedCheck = null;
+      let latestActiveCheck = null;
+      let knownCheckResult = "";
+      let knownRecordStatus = "";
+
+      const resultLabelMap = { PASS: "通过", WARN: "警告", BLOCK: "拦截" };
+      const recordStatusLabelMap = { ACTIVE: "有效", INVALIDATED: "已失效" };
+
+      function setResult(payload) {
+        if (!payload) {
+          resultPanel.textContent = "接口无响应。";
+          return;
+        }
+        resultPanel.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      function resetSnapshot() {
+        checkResultValue.textContent = "未加载";
+        checkVersionValue.textContent = "未加载";
+        recordStatusValue.textContent = "未加载";
+        latestActiveValue.textContent = "未加载";
+        recheckFlagValue.textContent = "未加载";
+        selectedCheckIdValue.textContent = "未加载";
+        riskNoteValue.textContent = "无";
+      }
+
+      function syncDisabled() {
+        const hasSelectedCheck = !!(selectedCheck && selectedCheck.id);
+        recheckButton.disabled = !hasSelectedCheck;
+        rollbackButton.disabled = !hasSelectedCheck;
+        toRetroButton.disabled =
+          !hasSelectedCheck ||
+          knownCheckResult === "BLOCK" ||
+          knownRecordStatus !== "ACTIVE";
+        recheckButton.classList.toggle("disabled", recheckButton.disabled);
+        rollbackButton.classList.toggle("disabled", rollbackButton.disabled);
+        toRetroButton.classList.toggle("disabled", toRetroButton.disabled);
+      }
+
+      function renderHistory(checks, latestActive) {
+        if (!checks.length) {
+          historyBody.innerHTML = "<tr><td colspan='5'>暂无检查历史</td></tr>";
+          return;
+        }
+        const latestActiveId = latestActive ? latestActive.id : "";
+        historyBody.innerHTML = checks.map(function (item) {
+          const resultLabel = resultLabelMap[item.result] || item.result;
+          const recordLabel = recordStatusLabelMap[item.record_status] || item.record_status;
+          const isLatest = item.id === latestActiveId ? "是" : "否";
+          return `<tr>
+            <td>${item.id}</td>
+            <td>${item.check_version}</td>
+            <td>${resultLabel}</td>
+            <td>${recordLabel}</td>
+            <td>${isLatest}</td>
+          </tr>`;
+        }).join("");
+      }
+
+      function renderSnapshot(currentCheck, latestActive, needRecheck) {
+        if (!currentCheck) {
+          resetSnapshot();
+          needRecheckHint.style.display = needRecheck ? "block" : "none";
+          return;
+        }
+        const resultLabel = resultLabelMap[currentCheck.result] || currentCheck.result;
+        const recordLabel = recordStatusLabelMap[currentCheck.record_status] || currentCheck.record_status;
+        const isLatestActive = !!(latestActive && latestActive.id === currentCheck.id);
+        const isRecheckResult = Number(currentCheck.check_version || 1) > 1;
+
+        checkResultValue.textContent = resultLabel;
+        checkVersionValue.textContent = String(currentCheck.check_version || "-");
+        recordStatusValue.textContent = recordLabel;
+        latestActiveValue.textContent = isLatestActive ? "是" : "否";
+        recheckFlagValue.textContent = isRecheckResult ? "是" : "否";
+        selectedCheckIdValue.textContent = currentCheck.id || "-";
+        riskNoteValue.textContent = currentCheck.result === "WARN" ? (currentCheck.risk_note || "无") : "无";
+        needRecheckHint.style.display = needRecheck ? "block" : "none";
+      }
+
+      async function fetchCheckDetail(checkId) {
+        const response = await fetch(`/api/checks/${encodeURIComponent(checkId)}`);
+        return response.json();
+      }
+
+      async function fetchChecksByContent(contentVariantId) {
+        const response = await fetch(`/api/checks?content_variant_id=${encodeURIComponent(contentVariantId)}`);
+        return response.json();
+      }
+
+      async function runAction(action, payload) {
+        const response = await fetch(`/web/actions/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        return response.json();
+      }
+
+      async function loadCheckContext() {
+        const queryMarkedNeedRecheck = query.get("need_recheck") === "1";
+        const checkId = checkIdInput.value.trim();
+        let contentVariantId = contentIdInput.value.trim();
+        let current = null;
+        let history = [];
+
+        if (checkId) {
+          const detail = await fetchCheckDetail(checkId);
+          if (detail.ok) {
+            current = detail.data.check;
+            contentVariantId = contentVariantId || current.content_variant_id || "";
+            contentIdInput.value = contentVariantId;
+          }
+        }
+
+        if (contentVariantId) {
+          const list = await fetchChecksByContent(contentVariantId);
+          if (list.ok) {
+            history = list.data.items || [];
+          }
+        }
+
+        latestActiveCheck = history.find(function (item) { return item.record_status === "ACTIVE"; }) || null;
+        if (!current && history.length > 0) {
+          current = latestActiveCheck || history[0];
+          checkIdInput.value = current.id;
+        }
+
+        selectedCheck = current;
+        knownCheckResult = selectedCheck ? selectedCheck.result : "";
+        knownRecordStatus = selectedCheck ? selectedCheck.record_status : "";
+
+        const hasOnlyInvalidated = history.length > 0 && !latestActiveCheck;
+        renderHistory(history, latestActiveCheck);
+        renderSnapshot(selectedCheck, latestActiveCheck, queryMarkedNeedRecheck || hasOnlyInvalidated);
+        syncDisabled();
+      }
+
+      checkIdInput.addEventListener("change", loadCheckContext);
+      contentIdInput.addEventListener("change", loadCheckContext);
+      checkIdInput.addEventListener("input", function () {
+        selectedCheck = null;
+        knownCheckResult = "";
+        knownRecordStatus = "";
+        syncDisabled();
+      });
+
+      syncDisabled();
+      loadCheckContext();
+
+      recheckButton.addEventListener("click", async function () {
+        if (!selectedCheck) { return; }
+        const response = await runAction("check_recheck", {
+          check_id: selectedCheck.id,
+        });
+        setResult(response);
+        if (response.ok) {
+          checkIdInput.value = response.data.check.id;
+          contentIdInput.value = response.data.check.content_variant_id || contentIdInput.value;
+          query.set("need_recheck", "0");
+          await loadCheckContext();
+        }
+      });
+
+      rollbackButton.addEventListener("click", async function () {
+        if (!selectedCheck) { return; }
+        const response = await runAction("check_rollback", {
+          check_id: selectedCheck.id,
+        });
+        setResult(response);
+        if (response.ok && response.data.requires_rework) {
+          const target = response.data.rollback_route || "/checks";
+          const params = new URLSearchParams();
+          if (response.data.content_variant_id) {
+            params.set("content_variant_id", response.data.content_variant_id);
+          }
+          if (response.data.image_asset_id) {
+            params.set("image_asset_id", response.data.image_asset_id);
+          }
+          params.set("need_recheck", "1");
+          window.location.href = `${target}?${params.toString()}`;
+        }
+      });
+
+      toRetroButton.addEventListener("click", async function () {
+        if (!selectedCheck) { return; }
+        const response = await runAction("check_to_retro", {
+          check_id: selectedCheck.id,
+          publish_result_summary: retroSummaryInput.value.trim() || "来自发布检查页的复盘摘要",
+        });
+        setResult(response);
+        if (response.ok) {
+          window.location.href = `/retros?publish_check_id=${encodeURIComponent(selectedCheck.id)}`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

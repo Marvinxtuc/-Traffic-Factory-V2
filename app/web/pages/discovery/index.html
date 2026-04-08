@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流量工厂 - 发现台</title>
+  <style>
+    body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
+    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
+    .nav a.active { background: #1d4ed8; color: #fff; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; background: #1d4ed8; color: #fff; }
+    .actions button.disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .actions input { display: block; margin: 8px 0; padding: 8px 10px; width: min(560px, 100%); border: 1px solid #cbd5e1; border-radius: 6px; }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
+    .status { background: #dbeafe; border-left: 4px solid #1d4ed8; padding: 10px 12px; }
+    .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="nav">
+      <a class="active" href="/discovery">发现台</a>
+      <a href="/topics">选题池</a>
+      <a href="/contents">内容工坊</a>
+      <a href="/images">图片工坊</a>
+      <a href="/checks">发布检查</a>
+      <a href="/retros">复盘台</a>
+    </nav>
+
+    <h1>发现台</h1>
+
+    <section class="card">
+      <h2>当前对象区</h2>
+      <p>当前对象：信号（Signal）</p>
+      <p>上游依赖：无（主链起点）</p>
+    </section>
+
+    <section class="card">
+      <h2>列表区占位</h2>
+      <p>信号列表占位：后续接入查询接口后展示已落库信号。</p>
+    </section>
+
+    <section class="card actions">
+      <h2>主动作按钮区</h2>
+      <p>动作：发现台转入选题（调用 `/api/signals/{signal_id}/advance-to-topic`）</p>
+      <label>
+        信号 ID（必填）
+        <input id="signal-id-input" type="text" placeholder="例如：sig_xxx">
+      </label>
+      <label>
+        选题标题（必填）
+        <input id="topic-title-input" type="text" placeholder="输入选题标题">
+      </label>
+      <button id="discovery-to-topic-btn" class="disabled" type="button" disabled>转入选题</button>
+      <div id="action-result" class="result-panel">等待动作执行。</div>
+    </section>
+
+    <section class="status">
+      <h2>状态提示区</h2>
+      <p>入口约束：只有已落库信号，才能进入选题池创建选题。</p>
+    </section>
+
+    <section class="empty">
+      <h2>错误/空状态占位</h2>
+      <p>暂无信号数据。请先创建或导入信号。</p>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const signalIdInput = document.getElementById("signal-id-input");
+      const topicTitleInput = document.getElementById("topic-title-input");
+      const actionButton = document.getElementById("discovery-to-topic-btn");
+      const resultPanel = document.getElementById("action-result");
+
+      const query = new URLSearchParams(window.location.search);
+      if (!signalIdInput.value && query.get("signal_id")) {
+        signalIdInput.value = query.get("signal_id");
+      }
+
+      function setResult(payload) {
+        if (!payload) {
+          resultPanel.textContent = "接口无响应。";
+          return;
+        }
+        resultPanel.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      function syncDisabled() {
+        const disabled = !signalIdInput.value.trim() || !topicTitleInput.value.trim();
+        actionButton.disabled = disabled;
+        actionButton.classList.toggle("disabled", disabled);
+      }
+
+      async function runAction(action, payload) {
+        const response = await fetch(`/web/actions/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        return response.json();
+      }
+
+      signalIdInput.addEventListener("input", syncDisabled);
+      topicTitleInput.addEventListener("input", syncDisabled);
+      syncDisabled();
+
+      actionButton.addEventListener("click", async function () {
+        const response = await runAction("discovery_to_topic", {
+          signal_id: signalIdInput.value.trim(),
+          title: topicTitleInput.value.trim(),
+        });
+        setResult(response);
+        if (response.ok) {
+          const topicId = response.data.id;
+          window.location.href = `/topics?topic_id=${encodeURIComponent(topicId)}&signal_id=${encodeURIComponent(signalIdInput.value.trim())}`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

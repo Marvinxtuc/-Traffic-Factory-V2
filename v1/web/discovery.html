@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="PAGE_TITLE.DISCOVERY"></title>
+  <link rel="stylesheet" href="/web/assets/ui.css" />
+</head>
+<body class="tf-body">
+  <div class="tf-app-shell">
+    <aside class="tf-sidebar" data-region="sidebar">
+      <div class="tf-brand">
+        <h1 class="tf-brand-title" data-i18n="BRAND.ENTERPRISE"></h1>
+        <p class="tf-brand-subtitle" data-i18n="BRAND.VERSION"></p>
+      </div>
+      <nav class="tf-nav" data-region="navigation">
+        <a class="tf-nav-link is-active" href="/web/discovery" data-i18n="NAV.DISCOVERY"></a>
+        <a class="tf-nav-link" href="/web/topics" data-i18n="NAV.TOPICS"></a>
+        <a class="tf-nav-link" href="/web/content" data-i18n="NAV.CONTENT"></a>
+        <span class="tf-nav-link tf-muted" data-i18n="NAV.IMAGE_LAB"></span>
+        <span class="tf-nav-link tf-muted" data-i18n="NAV.QUALITY_GATE"></span>
+        <span class="tf-nav-link tf-muted" data-i18n="NAV.RETROSPECTIVE"></span>
+      </nav>
+      <div class="tf-nav-tail">
+        <span class="tf-nav-link tf-muted" data-i18n="NAV.HELP_CENTER"></span>
+        <span class="tf-nav-link tf-muted" data-i18n="NAV.ACCOUNT"></span>
+      </div>
+    </aside>
+
+    <div class="tf-main">
+      <header class="tf-topbar" data-region="header">
+        <h2 class="tf-topbar-title-sm" data-i18n="BRAND.PRODUCT"></h2>
+        <div class="tf-chip" data-i18n="MODULE.SIGNAL_FEED"></div>
+      </header>
+
+      <main class="tf-workspace" data-page="discovery">
+        <section id="discovery-filters" class="tf-panel" data-slot="filters">
+          <div class="tf-panel-body">
+            <div class="tf-chip-row">
+              <label class="tf-chip is-strong">
+                <span data-i18n="FIELD.SOURCE"></span>
+                <select id="filter-source-type" class="tf-select" style="min-width: 110px;">
+                  <option value="" data-i18n="DISCOVERY.FILTER_SOURCE_ALL"></option>
+                  <option value="rss" data-i18n="DISCOVERY.FILTER_SOURCE_RSS"></option>
+                  <option value="web" data-i18n="DISCOVERY.FILTER_SOURCE_WEB"></option>
+                  <option value="manual" data-i18n="DISCOVERY.FILTER_SOURCE_MANUAL"></option>
+                </select>
+              </label>
+              <label class="tf-chip">
+                <span data-i18n="FIELD.STATUS"></span>
+                <select id="filter-status" class="tf-select" style="min-width: 110px;">
+                  <option value="" data-i18n="DISCOVERY.FILTER_STATUS_ALL"></option>
+                  <option value="new" data-i18n="STATUS.SIGNAL.new"></option>
+                  <option value="reviewed" data-i18n="STATUS.SIGNAL.reviewed"></option>
+                  <option value="converted" data-i18n="STATUS.SIGNAL.converted"></option>
+                  <option value="archived" data-i18n="STATUS.SIGNAL.archived"></option>
+                </select>
+              </label>
+              <button id="signal-refresh" class="tf-button is-secondary" type="button" data-i18n="ACTION.REFRESH"></button>
+              <span id="signals-total" class="tf-muted" style="font-size: 11px; margin-left: auto;"></span>
+            </div>
+          </div>
+        </section>
+
+        <section id="discovery-list" class="tf-panel" data-slot="list">
+          <div class="tf-panel-body">
+            <div id="signals-state" class="tf-state-host"></div>
+            <div id="signals-body" class="tf-signal-list"></div>
+          </div>
+        </section>
+
+        <section id="discovery-detail" class="is-hidden" data-slot="detail"></section>
+      </main>
+    </div>
+  </div>
+
+  <aside id="signal-drawer" class="tf-drawer" aria-hidden="true">
+    <div class="tf-drawer-head">
+      <h3 class="tf-drawer-title" data-i18n="MODULE.SIGNAL_ANALYSIS"></h3>
+      <button id="close-signal-drawer" class="tf-button is-secondary" type="button" data-i18n="ACTION.CLOSE"></button>
+    </div>
+    <div class="tf-drawer-body">
+      <div class="tf-card">
+        <h4 class="tf-section-title" data-i18n="MODULE.METADATA"></h4>
+        <dl class="tf-kv">
+          <dt data-i18n="FIELD.SIGNAL_ID"></dt><dd id="drawer-signal-id">-</dd>
+          <dt data-i18n="FIELD.SOURCE"></dt><dd id="drawer-signal-source">-</dd>
+          <dt data-i18n="FIELD.STATUS"></dt><dd id="drawer-signal-status">-</dd>
+          <dt data-i18n="FIELD.COLLECTED_AT"></dt><dd id="drawer-signal-collected">-</dd>
+          <dt data-i18n="FIELD.URL"></dt><dd id="drawer-signal-url">-</dd>
+        </dl>
+      </div>
+
+      <div class="tf-card">
+        <h4 id="drawer-signal-title" style="margin: 0 0 8px; font-size: 22px; line-height: 1.25;">-</h4>
+        <p id="drawer-signal-summary" class="tf-muted" style="margin: 0 0 10px; font-size: 14px;"></p>
+        <div id="drawer-signal-tags" class="tf-inline-tags"></div>
+      </div>
+
+      <div class="tf-card tf-ai-insight">
+        <h4 class="tf-section-title" style="color: var(--tf-tertiary);" data-i18n="MODULE.SMART_INSIGHT"></h4>
+        <p id="drawer-ai-insight" style="margin: 0; font-size: 13px; color: #5c2f10;"></p>
+      </div>
+
+      <div class="tf-card">
+        <h4 class="tf-section-title" data-i18n="MODULE.OPERATION_RESULT"></h4>
+        <pre id="result-box" class="tf-json">{}</pre>
+      </div>
+    </div>
+    <div class="tf-drawer-footer">
+      <button id="drawer-review" class="tf-button is-secondary" type="button" data-i18n="ACTION.MARK_REVIEWED"></button>
+      <button id="drawer-promote" class="tf-button is-primary" type="button" data-i18n="ACTION.PROMOTE_TOPIC"></button>
+      <button id="drawer-discard" class="tf-button is-secondary" type="button" data-i18n="ACTION.DISCARD"></button>
+    </div>
+  </aside>
+  <div id="signal-drawer-backdrop" class="tf-drawer-backdrop"></div>
+
+  <script src="/web/assets/i18n_zh.js"></script>
+  <script src="/web/assets/ui.js"></script>
+  <script>
+    TFUI.applyI18n(document);
+
+    const refs = {
+      filterSourceType: document.getElementById('filter-source-type'),
+      filterStatus: document.getElementById('filter-status'),
+      signalRefresh: document.getElementById('signal-refresh'),
+      signalsState: document.getElementById('signals-state'),
+      signalsBody: document.getElementById('signals-body'),
+      signalsTotal: document.getElementById('signals-total'),
+      signalDrawer: document.getElementById('signal-drawer'),
+      signalDrawerBackdrop: document.getElementById('signal-drawer-backdrop'),
+      closeSignalDrawer: document.getElementById('close-signal-drawer'),
+      drawerSignalId: document.getElementById('drawer-signal-id'),
+      drawerSignalSource: document.getElementById('drawer-signal-source'),
+      drawerSignalStatus: document.getElementById('drawer-signal-status'),
+      drawerSignalCollected: document.getElementById('drawer-signal-collected'),
+      drawerSignalUrl: document.getElementById('drawer-signal-url'),
+      drawerSignalTitle: document.getElementById('drawer-signal-title'),
+      drawerSignalSummary: document.getElementById('drawer-signal-summary'),
+      drawerSignalTags: document.getElementById('drawer-signal-tags'),
+      drawerAiInsight: document.getElementById('drawer-ai-insight'),
+      drawerReview: document.getElementById('drawer-review'),
+      drawerPromote: document.getElementById('drawer-promote'),
+      drawerDiscard: document.getElementById('drawer-discard'),
+      resultBox: document.getElementById('result-box'),
+    };
+
+    const t = TFUI.t;
+    const formatTemplate = TFUI.formatTemplate;
+
+    let signals = [];
+    let selectedSignalId = null;
+    const discardedSignalIds = new Set();
+
+    function setResult(payload) {
+      refs.resultBox.textContent = TFUI.prettyJSON(payload || {});
+    }
+
+    function currentSignal() {
+      return signals.find((item) => item.id === selectedSignalId) || null;
+    }
+
+    function filteredSignals() {
+      const sourceType = refs.filterSourceType.value;
+      const status = refs.filterStatus.value;
+      return signals.filter((item) => {
+        if (discardedSignalIds.has(item.id)) return false;
+        if (sourceType && item.source_type !== sourceType) return false;
+        if (status && item.status !== status) return false;
+        return true;
+      });
+    }
+
+    function calcHeat(item) {
+      const score = Number(item.quality_score);
+      if (!Number.isFinite(score)) return 0;
+      if (score <= 1) return Math.max(0, Math.min(100, Math.round(score * 100)));
+      return Math.max(0, Math.min(100, Math.round(score)));
+    }
+
+    function formatSourceType(sourceType) {
+      if (sourceType === 'rss') return t('COMMON.SOURCE_TYPE_RSS');
+      if (sourceType === 'web') return t('COMMON.SOURCE_TYPE_WEB');
+      if (sourceType === 'manual') return t('COMMON.SOURCE_TYPE_MANUAL');
+      return sourceType || t('COMMON.NONE');
+    }
+
+    function formatSourceName(sourceName, sourceType) {
+      if (sourceName && sourceName.trim()) {
+        return sourceName;
+      }
+      return formatSourceType(sourceType);
+    }
+
+    function setDrawer(signal) {
+      if (!signal) {
+        refs.drawerSignalId.textContent = t('COMMON.NONE');
+        refs.drawerSignalSource.textContent = t('COMMON.NONE');
+        refs.drawerSignalStatus.textContent = t('COMMON.NONE');
+        refs.drawerSignalCollected.textContent = t('COMMON.NONE');
+        refs.drawerSignalUrl.textContent = t('COMMON.NONE');
+        refs.drawerSignalTitle.textContent = t('COMMON.NONE');
+        refs.drawerSignalSummary.textContent = '';
+        refs.drawerSignalTags.innerHTML = '';
+        refs.drawerAiInsight.textContent = t('DISCOVERY.DRAWER_INSIGHT_WAIT');
+        refs.drawerReview.disabled = true;
+        return;
+      }
+
+      refs.drawerSignalId.textContent = String(signal.id || t('COMMON.NONE'));
+      refs.drawerSignalSource.textContent = `${formatSourceType(signal.source_type)}${t('COMMON.SOURCE_JOINER')}${signal.source_name || t('COMMON.NONE')}`;
+      refs.drawerSignalStatus.innerHTML = TFUI.statusBadgeHtml(signal.status || 'new', 'signal');
+      refs.drawerSignalCollected.textContent = signal.collected_at || t('COMMON.NONE');
+      refs.drawerSignalUrl.textContent = signal.canonical_url || t('COMMON.NONE');
+      refs.drawerSignalTitle.textContent = signal.title || t('COMMON.NONE');
+      refs.drawerSignalSummary.textContent = signal.summary || signal.content_raw || t('DISCOVERY.SUMMARY_EMPTY');
+
+      const tags = Array.isArray(signal.tags) ? signal.tags : [];
+      refs.drawerSignalTags.innerHTML = tags.length
+        ? tags.map((tag) => TFUI.tagHtml(tag)).join('')
+        : `<span class="tf-muted">${TFUI.escapeHtml(t('COMMON.TAG_NONE'))}</span>`;
+      refs.drawerAiInsight.textContent = formatTemplate(t('DISCOVERY.DRAWER_INSIGHT_SCORE_TEMPLATE'), { score: calcHeat(signal) });
+      refs.drawerReview.disabled = signal.status !== 'new';
+    }
+
+    function renderSkeleton() {
+      refs.signalsBody.innerHTML = '';
+      for (let i = 0; i < 3; i += 1) {
+        const card = document.createElement('div');
+        card.className = 'tf-skeleton-card';
+        card.innerHTML = `
+          <div class="tf-skeleton-row" style="width: 120px;"></div>
+          <div class="tf-skeleton-row" style="width: 92%; height: 18px;"></div>
+          <div class="tf-skeleton-row" style="width: 68%; height: 18px;"></div>
+          <div class="tf-skeleton-row" style="width: 100%; height: 30px; margin-top: 8px;"></div>
+        `;
+        refs.signalsBody.appendChild(card);
+      }
+    }
+
+    function renderEmpty() {
+      refs.signalsBody.innerHTML = `
+        <div class="tf-state tf-state-empty">
+          <p class="tf-state-title">${TFUI.escapeHtml(t('DISCOVERY.EMPTY_TITLE'))}</p>
+          <p class="tf-state-desc">${TFUI.escapeHtml(t('DISCOVERY.EMPTY_DESC'))}</p>
+        </div>
+      `;
+    }
+
+    function renderSignals() {
+      const items = filteredSignals();
+      refs.signalsTotal.textContent = formatTemplate(t('DISCOVERY.TOTAL_TEMPLATE'), { count: items.length });
+
+      if (!items.length) {
+        if (!selectedSignalId || !signals.length) {
+          TFUI.closeDrawer(refs.signalDrawer, refs.signalDrawerBackdrop);
+          setDrawer(null);
+        }
+        renderEmpty();
+        return;
+      }
+
+      if (!items.some((item) => item.id === selectedSignalId)) {
+        selectedSignalId = items[0].id;
+      }
+
+      refs.signalsBody.innerHTML = '';
+
+      items.forEach((item) => {
+        const heat = calcHeat(item);
+        const card = document.createElement('article');
+        card.className = `tf-signal-card${item.id === selectedSignalId ? ' is-selected' : ''}`;
+        card.innerHTML = `
+          <div class="tf-signal-head">
+            <div class="tf-signal-meta">
+              <span class="tf-tag">${TFUI.escapeHtml(formatSourceName(item.source_name, item.source_type))}</span>
+              <span class="tf-muted" style="font-size: 12px;">${TFUI.escapeHtml(item.collected_at || '')}</span>
+            </div>
+            <span class="tf-heat">${heat}</span>
+          </div>
+          <h3 class="tf-signal-title">${TFUI.escapeHtml(item.title || '')}</h3>
+          <div class="tf-signal-actions">
+            <button type="button" class="tf-button is-secondary" data-action="review" ${item.status === 'new' ? '' : 'disabled'}>${TFUI.escapeHtml(t('ACTION.MARK_REVIEWED'))}</button>
+            <button type="button" class="tf-button is-primary" data-action="promote">${TFUI.escapeHtml(t('ACTION.PROMOTE_TOPIC'))}</button>
+            <button type="button" class="tf-button is-secondary" data-action="discard">${TFUI.escapeHtml(t('ACTION.DISCARD'))}</button>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          selectedSignalId = item.id;
+          setDrawer(item);
+          renderSignals();
+          TFUI.openDrawer(refs.signalDrawer, refs.signalDrawerBackdrop);
+        });
+
+        const reviewButton = card.querySelector('[data-action="review"]');
+        reviewButton.addEventListener('click', async (event) => {
+          event.stopPropagation();
+          await reviewSignal(item.id, reviewButton);
+        });
+
+        const promoteButton = card.querySelector('[data-action="promote"]');
+        promoteButton.addEventListener('click', async (event) => {
+          event.stopPropagation();
+          await promoteToTopic(item.id, promoteButton);
+        });
+
+        card.querySelector('[data-action="discard"]').addEventListener('click', (event) => {
+          event.stopPropagation();
+          discardSignal(item.id);
+        });
+
+        refs.signalsBody.appendChild(card);
+      });
+
+      setDrawer(currentSignal());
+    }
+
+    function discardSignal(signalId) {
+      discardedSignalIds.add(signalId);
+      const active = currentSignal();
+      if (active && active.id === signalId) {
+        selectedSignalId = null;
+        TFUI.closeDrawer(refs.signalDrawer, refs.signalDrawerBackdrop);
+      }
+      setResult({ discarded_signal_id: signalId, note: t('DISCOVERY.RESULT_DISCARD_NOTE') });
+      renderSignals();
+    }
+
+    async function reviewSignal(signalId, triggerButton) {
+      if (triggerButton) triggerButton.disabled = true;
+      try {
+        const payload = await TFUI.requestJSON(`/signals/${signalId}/review`, {
+          method: 'POST',
+          body: {},
+        });
+        setResult(payload);
+        await loadSignals();
+      } catch (error) {
+        setResult({
+          error: TFUI.normalizeErrorMessage(error),
+          payload: error.payload || null,
+        });
+      } finally {
+        if (triggerButton) triggerButton.disabled = false;
+      }
+    }
+
+    async function promoteToTopic(signalId, triggerButton) {
+      if (triggerButton) triggerButton.disabled = true;
+      try {
+        const payload = await TFUI.requestJSON(`/topics/from-signal/${signalId}`, {
+          method: 'POST',
+          body: {},
+        });
+        setResult(payload);
+        await loadSignals();
+      } catch (error) {
+        setResult({
+          error: TFUI.normalizeErrorMessage(error),
+          payload: error.payload || null,
+        });
+      } finally {
+        if (triggerButton) triggerButton.disabled = false;
+      }
+    }
+
+    async function loadSignals() {
+      TFUI.setState(refs.signalsState, 'loading', t('STATE.LOADING'), t('DISCOVERY.LOADING_DESC'));
+      renderSkeleton();
+
+      const params = new URLSearchParams({ limit: '100', order: 'desc' });
+      const sourceType = refs.filterSourceType.value;
+      const status = refs.filterStatus.value;
+      if (sourceType) params.set('source_type', sourceType);
+      if (status) params.set('status', status);
+
+      try {
+        const payload = await TFUI.requestJSON(`/signals?${params.toString()}`);
+        signals = payload.items || [];
+        TFUI.clearState(refs.signalsState);
+        renderSignals();
+      } catch (error) {
+        refs.signalsBody.innerHTML = '';
+        TFUI.setState(refs.signalsState, 'error', t('STATE.READ_FAILED'), TFUI.normalizeErrorMessage(error), {
+          actionLabel: t('ACTION.RETRY'),
+          onAction: () => loadSignals(),
+        });
+      }
+    }
+
+    refs.signalRefresh.addEventListener('click', () => loadSignals());
+    refs.filterSourceType.addEventListener('change', () => renderSignals());
+    refs.filterStatus.addEventListener('change', () => renderSignals());
+
+    refs.closeSignalDrawer.addEventListener('click', () => TFUI.closeDrawer(refs.signalDrawer, refs.signalDrawerBackdrop));
+
+    refs.drawerPromote.addEventListener('click', async () => {
+      const signal = currentSignal();
+      if (!signal) return;
+      await promoteToTopic(signal.id, refs.drawerPromote);
+    });
+
+    refs.drawerReview.addEventListener('click', async () => {
+      const signal = currentSignal();
+      if (!signal) return;
+      await reviewSignal(signal.id, refs.drawerReview);
+    });
+
+    refs.drawerDiscard.addEventListener('click', () => {
+      const signal = currentSignal();
+      if (!signal) return;
+      discardSignal(signal.id);
+    });
+
+    refs.signalsTotal.textContent = formatTemplate(t('DISCOVERY.TOTAL_TEMPLATE'), { count: 0 });
+    refs.drawerAiInsight.textContent = t('DISCOVERY.DRAWER_INSIGHT_DEFAULT');
+    refs.drawerReview.disabled = true;
+    setResult({ message: t('DISCOVERY.RESULT_WAIT') });
+    loadSignals();
+  </script>
+</body>
+</html>

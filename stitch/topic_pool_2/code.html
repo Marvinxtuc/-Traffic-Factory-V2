@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Traffic Factory - Topic Pool</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "tertiary-container": "#7b3100",
+                "on-surface": "#191c1e",
+                "outline": "#747783",
+                "tertiary-fixed": "#ffdbcb",
+                "on-primary-fixed": "#001944",
+                "background": "#f7f9fc",
+                "surface-variant": "#e0e3e6",
+                "on-secondary-fixed": "#0c1b38",
+                "on-secondary-container": "#505d7e",
+                "surface-container": "#eceef1",
+                "surface-bright": "#f7f9fc",
+                "surface-dim": "#d8dadd",
+                "outline-variant": "#c3c6d3",
+                "primary-fixed": "#d9e2ff",
+                "surface": "#f7f9fc",
+                "on-secondary-fixed-variant": "#394666",
+                "on-error-container": "#93000a",
+                "surface-container-low": "#f2f4f7",
+                "inverse-surface": "#2d3133",
+                "tertiary-fixed-dim": "#ffb692",
+                "secondary-container": "#c9d7fd",
+                "on-tertiary-fixed": "#341100",
+                "on-secondary": "#ffffff",
+                "surface-container-highest": "#e0e3e6",
+                "secondary": "#515e7f",
+                "on-tertiary-fixed-variant": "#793000",
+                "inverse-primary": "#b0c6ff",
+                "surface-container-lowest": "#ffffff",
+                "on-surface-variant": "#434651",
+                "on-tertiary-container": "#ff9e6d",
+                "on-error": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-primary": "#ffffff",
+                "error": "#ba1a1a",
+                "secondary-fixed-dim": "#b9c6ec",
+                "secondary-fixed": "#d9e2ff",
+                "on-tertiary": "#ffffff",
+                "on-primary-container": "#97b5ff",
+                "tertiary": "#572100",
+                "primary-fixed-dim": "#b0c6ff",
+                "on-primary-fixed-variant": "#124393",
+                "surface-tint": "#335bac",
+                "primary": "#002e70",
+                "on-background": "#191c1e",
+                "primary-container": "#144494",
+                "surface-container-high": "#e6e8eb",
+                "inverse-on-surface": "#eff1f4"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "fontFamily": {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f7f9fc;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #c3c6d3;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Sidebar Wrapper -->
+<aside class="fixed inset-y-0 left-0 flex flex-col bg-slate-50 dark:bg-slate-900 h-screen w-64 flex-shrink-0 border-r border-transparent z-50">
+<div class="p-6">
+<h1 class="text-lg font-black tracking-tighter text-blue-900 dark:text-blue-100 uppercase">Traffic Factory</h1>
+<p class="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-slate-400 mt-1">Production Pipeline</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<!-- Discovery -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">search</span>
+<span class="font-['Inter'] body-md tracking-tight">Discovery</span>
+</a>
+<!-- Topic Pool (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-blue-100/50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200 border-l-4 border-blue-800 font-semibold rounded-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">database</span>
+<span class="font-['Inter'] body-md tracking-tight">Topic Pool</span>
+</a>
+<!-- Content Lab -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">edit_note</span>
+<span class="font-['Inter'] body-md tracking-tight">Content Lab</span>
+</a>
+<!-- Image Lab -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">image</span>
+<span class="font-['Inter'] body-md tracking-tight">Image Lab</span>
+</a>
+<!-- Quality Gate -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">fact_check</span>
+<span class="font-['Inter'] body-md tracking-tight">Quality Gate</span>
+</a>
+<!-- Retrospective -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">history</span>
+<span class="font-['Inter'] body-md tracking-tight">Retrospective</span>
+</a>
+</nav>
+<div class="p-3 border-t border-slate-200/50">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">settings</span>
+<span class="font-['Inter'] body-md tracking-tight">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-hover:text-blue-900">help_outline</span>
+<span class="font-['Inter'] body-md tracking-tight">Support</span>
+</a>
+<div class="mt-4 flex items-center gap-3 px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-sm">
+<img class="w-8 h-8 rounded-full object-cover grayscale" data-alt="Portrait of a male creative director in a professional tech environment with soft directional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCRz1NW4cTYvs-Jr8T1WWWPsw3amEMBB696eY4LDr1FE03hlNDVbYZA3k5kW6r3FOYtcrdoUHczZ3HwFt3UUdG1QpBZPHwHoJvBGkjR42R6e3OykmFCtoFIOJxc1mJxUZ2e5TM-7ZRSfXkX7WLLjVz6MjXkd44TOMhKj1C2CBrV9_qi9c1sYgktixJUV9zvHHrXncoQ1VuCHUiG2y1eaIeTm0ePOdo_d4TvS6y9_MADtINv9L9vdVDBd86ml6zQ0Z3F0gn0YoVIiY"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold truncate">Alex Chen</p>
+<p class="text-[10px] text-slate-500 truncate">Lead Strategist</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="flex justify-between items-center w-full px-8 sticky top-0 z-40 h-16 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 ml-64 max-w-[calc(100%-16rem)]">
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 text-[10px] font-['Inter'] uppercase tracking-wider">
+<span class="text-slate-400">Traffic Factory</span>
+<span class="material-symbols-outlined text-[12px] text-slate-300">chevron_right</span>
+<span class="text-blue-900 dark:text-blue-400 font-bold">Topic Pool</span>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-surface-container-low border-none text-xs pl-10 pr-4 py-2 w-64 rounded-sm focus:ring-1 focus:ring-primary" placeholder="Search topics..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-slate-500">
+<button class="hover:text-blue-900 transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:text-blue-900 transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="ml-64 p-8 min-h-[calc(100vh-4rem)]">
+<!-- Header Section & Stats Grid -->
+<section class="mb-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-black tracking-tight text-primary uppercase">Topic Pool</h2>
+<p class="text-on-surface-variant text-sm mt-1">Curate and prioritize incoming data streams for production.</p>
+</div>
+<button class="bg-primary text-white px-6 py-2.5 text-xs font-bold tracking-wider uppercase rounded-sm flex items-center gap-2 hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                    New Entry
+                </button>
+</div>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-sm border-b-2 border-primary transition-all">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pending Review</span>
+<span class="material-symbols-outlined text-primary/30">hourglass_empty</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-4xl font-black text-primary">124</span>
+<span class="text-xs text-error font-medium flex items-center">+12%</span>
+</div>
+<p class="text-[10px] text-slate-500 mt-2">Requires immediate categorization</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-sm border-b-2 border-tertiary transition-all">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Processing</span>
+<span class="material-symbols-outlined text-tertiary/30">sync</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-4xl font-black text-on-surface">42</span>
+<span class="text-xs text-success_green font-medium">Active</span>
+</div>
+<p class="text-[10px] text-slate-500 mt-2">Currently in the AI Lab pipeline</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-sm border-b-2 border-outline-variant transition-all">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Archived</span>
+<span class="material-symbols-outlined text-slate-300">inventory_2</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-4xl font-black text-slate-400">892</span>
+<span class="text-xs text-slate-400">Lifetime</span>
+</div>
+<p class="text-[10px] text-slate-500 mt-2">Historical reference data</p>
+</div>
+</div>
+</section>
+<!-- Main Content: Topic List -->
+<div class="bg-surface-container-lowest rounded-sm overflow-hidden">
+<!-- Filter Bar -->
+<div class="px-6 py-4 flex items-center justify-between border-b border-surface-container-high bg-surface-container-low/30">
+<div class="flex gap-4">
+<button class="text-xs font-bold text-primary px-3 py-1 bg-primary-fixed rounded-sm">All Topics</button>
+<button class="text-xs font-medium text-on-surface-variant hover:text-primary px-3 py-1 transition-colors">High Priority</button>
+<button class="text-xs font-medium text-on-surface-variant hover:text-primary px-3 py-1 transition-colors">Unassigned</button>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] uppercase font-bold text-slate-400 mr-2">Sort by:</span>
+<select class="bg-transparent border-none text-[10px] font-bold uppercase p-0 focus:ring-0 cursor-pointer">
+<option>Prop. Score</option>
+<option>Date Created</option>
+<option>Priority</option>
+</select>
+</div>
+</div>
+<!-- Custom Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Topic Details</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Priority</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-center">Propagation</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Channels</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Topic Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 bg-slate-100 rounded-sm overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="High-tech glowing computer hardware and futuristic aesthetic with blue and purple lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx0t-KaHNysRc4PbdrYYe55MIhVz9D4hqLuK4J6vTpIb9Yj0COSFCjnYYs40CI5jFal3rMPTju5W3I1DO2ZZ3JA4vQ0NYRSeqxfCFAwrDchKISk9OuaH-cupmCWMtEi0ngqSZsBgS7rLxhupGn4vn46QLDcy2olUQhHktWWnq_uOU7UZwtbIpOJiR-jWYX3e2mi7xVUKz1r_uB7156A3m-wBLu8WLG8O3wN0FxVQOmsbK_o1vY0s9dolLF-M-cnkJR26uUw0kO1nw"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface leading-tight">Future of Decentralized AI Computing</h4>
+<p class="text-xs text-on-surface-variant mt-1">Tech Trends • 2,400+ Raw Mentions</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="bg-error-container text-on-error-container text-[10px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter">Critical</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex flex-col items-center">
+<span class="text-lg font-black text-tertiary">94.8</span>
+<div class="w-16 h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-tertiary w-[94%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<div class="flex gap-2">
+<span class="text-[10px] bg-secondary-container text-on-secondary-container font-bold px-2 py-0.5 rounded-sm">WeChat</span>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container font-bold px-2 py-0.5 rounded-sm">Red</span>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="bg-primary text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-sm hover:bg-primary-container transition-colors shadow-sm">Start Production</button>
+</td>
+</tr>
+<!-- Topic Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 bg-slate-100 rounded-sm overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Abstract data visualization with glowing orange and blue lines on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANgQLVadTVpS7ZZny0QTXWL_4qSD-hjm69pQvBz0M4snNEQiCWEcLeziUOVRFvVh1WRzu1ZZ96UlPiFXDrAai6Dk-ZGRybKv2DxBzIyvpUXcS7fGMxWSUVP3I24hE1j7YGNAyeZvJU-3dCNmNBgJ6XsJ-v0SnlJya79bnvsH-CguMtkl6_3Oi-htP6hJ5axBfF1-70oIr89dq68qs5gjP5Qlljgea2h87eWpbVCDVr3EJJ00VvJBzsHC3QJbfQ5XpmPJSJKSsR9lA"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface leading-tight">Q3 Financial Sentiment: Emerging Markets</h4>
+<p class="text-xs text-on-surface-variant mt-1">Economy • 1,120+ Raw Mentions</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter">Normal</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex flex-col items-center">
+<span class="text-lg font-black text-tertiary">72.4</span>
+<div class="w-16 h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-tertiary w-[72%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<div class="flex gap-2">
+<span class="text-[10px] bg-secondary-container text-on-secondary-container font-bold px-2 py-0.5 rounded-sm">WeChat</span>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="bg-primary text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-sm hover:bg-primary-container transition-colors shadow-sm">Start Production</button>
+</td>
+</tr>
+<!-- Topic Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 bg-slate-100 rounded-sm overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Cyberpunk city street at night with neon lights reflecting in puddles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZV2fBCcCv6qAdgoc1NQEbGnrDTb7Y68jMAzhFY32WZGUw8Ea5Pw7WOfQgvRBa6XD2xIeadJWgOsUcD98P8EW45xKIMWuNi2wk5jUnggz_pYl-Wxtm1LYT0zPfBb-AUBtKtxWw0FMJjS9RHpeeyVBn6ehVvORB3BL44A2cDhwiDnXQm8HeBNNWrM3n-TExfBjm_ExubQf8TgSRGMfDkUmp93iODpPatmIh8mfl1p7WOiEzwhIH_l41Smzv5gPtMmQ3WXJH6dDUvmE"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface leading-tight">Urban Mobility 2025: Electric Aviation</h4>
+<p class="text-xs text-on-surface-variant mt-1">Lifestyle • 4,890+ Raw Mentions</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter">High</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex flex-col items-center">
+<span class="text-lg font-black text-tertiary">88.1</span>
+<div class="w-16 h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-tertiary w-[88%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<div class="flex gap-2">
+<span class="text-[10px] bg-secondary-container text-on-secondary-container font-bold px-2 py-0.5 rounded-sm">Red</span>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="bg-primary text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-sm hover:bg-primary-container transition-colors shadow-sm">Start Production</button>
+</td>
+</tr>
+<!-- Topic Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 bg-slate-100 rounded-sm overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional studio photo of circuit boards and microprocessor components in soft focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWlS4M0vTrfBG33tIwZpB-Ohdkt7Xq-ErV3jqREH5axy9V3sGRm_2SWArMoCFdRfpkYkJPH0m8sazxRcXxBSlA2wKBDMEWHBY6uP4QgzXLJ2y5BtxCpmvEbC7D1MFo8ZirJsuOpEpFOwf0PIsOEZSg10AS3NhM8GVb8wZbFiPvODuR8FcLJYyfuH_lrLD-GjIUs9BK-SulxUqVO1uKnRAHdPSM3KZARuvA0YuLIB2gsDptE-MvRysJcfVSX1yLrjwynraA98zaDwo"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface leading-tight">Sustainable Packaging Innovations</h4>
+<p class="text-xs text-on-surface-variant mt-1">ESG • 650+ Raw Mentions</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="bg-surface-container-high text-on-surface-variant text-[10px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter">Low</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex flex-col items-center">
+<span class="text-lg font-black text-tertiary">45.0</span>
+<div class="w-16 h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-tertiary w-[45%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<div class="flex gap-2">
+<span class="text-[10px] bg-secondary-container text-on-secondary-container font-bold px-2 py-0.5 rounded-sm">WeChat</span>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container font-bold px-2 py-0.5 rounded-sm">Red</span>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="bg-primary text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-sm hover:bg-primary-container transition-colors shadow-sm">Start Production</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 bg-surface-container-low/20 flex items-center justify-between">
+<span class="text-xs text-on-surface-variant font-medium">Showing 1-15 of 124 topics</span>
+<div class="flex gap-1">
+<button class="p-2 hover:bg-surface-container rounded-sm transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="px-3 py-1 text-xs font-bold bg-primary text-white rounded-sm">1</button>
+<button class="px-3 py-1 text-xs font-medium hover:bg-surface-container rounded-sm transition-colors">2</button>
+<button class="px-3 py-1 text-xs font-medium hover:bg-surface-container rounded-sm transition-colors">3</button>
+<button class="p-2 hover:bg-surface-container rounded-sm transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Sticky AI Insight Sidebar (Asymmetric layout element) -->
+<div class="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
+<div class="lg:col-span-3 space-y-6">
+<!-- Secondary Info Section -->
+<div class="bg-surface-container-low p-8 rounded-sm">
+<h3 class="text-sm font-black uppercase tracking-widest text-primary mb-4">Topic Propagation Trends</h3>
+<div class="h-48 flex items-end gap-2 px-2">
+<div class="flex-1 bg-primary/20 h-[60%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[45%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[85%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[70%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[95%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[55%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[80%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[40%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[65%] rounded-t-sm hover:bg-primary transition-colors"></div>
+<div class="flex-1 bg-primary/20 h-[75%] rounded-t-sm hover:bg-primary transition-colors"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold uppercase text-slate-400">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+</div>
+</div>
+<!-- AI Sidebar -->
+<div class="bg-tertiary text-on-tertiary p-6 rounded-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<span class="text-[10px] font-black uppercase tracking-widest">AI Prediction</span>
+</div>
+<h4 class="text-xl font-bold leading-tight">Computing Sector Spike imminent.</h4>
+<p class="text-xs mt-3 opacity-80 leading-relaxed">Cross-platform analysis suggests a 34% increase in search volume for "Decentralized GPU nodes" over the next 48 hours.</p>
+</div>
+<div class="mt-8">
+<button class="w-full bg-on-tertiary text-tertiary text-[10px] font-black uppercase py-3 rounded-sm hover:bg-tertiary-fixed transition-colors">Optimize Strategy</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button - Only for production-critical screens -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform group z-50">
+<span class="material-symbols-outlined">bolt</span>
+<span class="absolute right-16 bg-on-surface text-white text-[10px] font-black uppercase px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Express Production</span>
+</button>
+</body></html>

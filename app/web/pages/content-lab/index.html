@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流量工厂 - 内容工坊</title>
+  <style>
+    body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
+    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
+    .nav a.active { background: #1d4ed8; color: #fff; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; }
+    .primary { background: #1d4ed8; color: #fff; }
+    .disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .actions input, .actions select, .actions textarea {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      width: min(620px, 100%);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
+    .status { background: #ffedd5; border-left: 4px solid #f97316; padding: 10px 12px; }
+    .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="nav">
+      <a href="/discovery">发现台</a>
+      <a href="/topics">选题池</a>
+      <a class="active" href="/contents">内容工坊</a>
+      <a href="/images">图片工坊</a>
+      <a href="/checks">发布检查</a>
+      <a href="/retros">复盘台</a>
+    </nav>
+
+    <h1>内容工坊</h1>
+
+    <section class="card">
+      <h2>当前对象区</h2>
+      <p>当前对象：内容版本（ContentVariant）</p>
+      <p>上游依赖：选题（Topic）</p>
+    </section>
+
+    <section class="card">
+      <h2>列表区/详情区占位</h2>
+      <p>内容版本列表与编辑详情占位：后续接入内容生成与版本记录。</p>
+    </section>
+
+    <section class="card actions">
+      <h2>主动作按钮区</h2>
+      <p>动作 1：配套图片（调用 `/api/contents/{content_id}/advance-to-image`）</p>
+      <label>
+        内容版本 ID（必填）
+        <input id="content-id-input" type="text" placeholder="例如：cnt_xxx">
+      </label>
+      <label>
+        图片类型
+        <select id="asset-type-input">
+          <option value="cover">cover</option>
+          <option value="inline">inline</option>
+        </select>
+      </label>
+      <label>
+        存储路径（必填）
+        <input id="storage-path-input" type="text" value="tmp/web-action-content-image.png">
+      </label>
+      <button id="content-to-image-btn" class="primary disabled" type="button" disabled>配套图片</button>
+
+      <p>动作 2：送检前置检查（调用 `/api/images?content_variant_id=...`）</p>
+      <button id="content-precheck-btn" class="primary disabled" type="button" disabled>送检前置检查</button>
+
+      <p>动作 3：标记内容已修改（统一触发旧检查失效）</p>
+      <label>
+        新正文（可选）
+        <textarea id="content-body-update-input" rows="3" placeholder="可选：输入修改后的正文"></textarea>
+      </label>
+      <button id="content-mark-modified-btn" class="primary disabled" type="button" disabled>标记内容已修改</button>
+
+      <div id="action-result" class="result-panel">等待动作执行。</div>
+    </section>
+
+    <section class="status">
+      <h2>状态提示区</h2>
+      <p>不可跳步占位：无选题不能创建内容版本；内容版本修改后需重新进入发布检查。</p>
+    </section>
+
+    <section class="empty">
+      <h2>错误/空状态占位</h2>
+      <p>未选择选题，当前不能进入可编辑状态。</p>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const contentIdInput = document.getElementById("content-id-input");
+      const assetTypeInput = document.getElementById("asset-type-input");
+      const storagePathInput = document.getElementById("storage-path-input");
+      const toImageButton = document.getElementById("content-to-image-btn");
+      const precheckButton = document.getElementById("content-precheck-btn");
+      const contentBodyUpdateInput = document.getElementById("content-body-update-input");
+      const markModifiedButton = document.getElementById("content-mark-modified-btn");
+      const resultPanel = document.getElementById("action-result");
+
+      const query = new URLSearchParams(window.location.search);
+      if (!contentIdInput.value && query.get("content_variant_id")) {
+        contentIdInput.value = query.get("content_variant_id");
+      }
+
+      function setResult(payload) {
+        if (!payload) {
+          resultPanel.textContent = "接口无响应。";
+          return;
+        }
+        resultPanel.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      function syncDisabled() {
+        const hasContentId = !!contentIdInput.value.trim();
+        const canCreateImage = hasContentId && !!storagePathInput.value.trim();
+        toImageButton.disabled = !canCreateImage;
+        toImageButton.classList.toggle("disabled", !canCreateImage);
+        precheckButton.disabled = !hasContentId;
+        precheckButton.classList.toggle("disabled", !hasContentId);
+        markModifiedButton.disabled = !hasContentId;
+        markModifiedButton.classList.toggle("disabled", !hasContentId);
+      }
+
+      async function runAction(action, payload) {
+        const response = await fetch(`/web/actions/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        return response.json();
+      }
+
+      contentIdInput.addEventListener("input", syncDisabled);
+      storagePathInput.addEventListener("input", syncDisabled);
+      syncDisabled();
+
+      toImageButton.addEventListener("click", async function () {
+        const response = await runAction("content_to_image", {
+          content_variant_id: contentIdInput.value.trim(),
+          asset_type: assetTypeInput.value.trim(),
+          storage_path: storagePathInput.value.trim(),
+        });
+        setResult(response);
+        if (response.ok) {
+          window.location.href = `/images?content_variant_id=${encodeURIComponent(contentIdInput.value.trim())}&image_asset_id=${encodeURIComponent(response.data.id)}`;
+        }
+      });
+
+      precheckButton.addEventListener("click", async function () {
+        const response = await runAction("content_precheck", {
+          content_variant_id: contentIdInput.value.trim(),
+        });
+        setResult(response);
+        if (response.ok) {
+          window.location.href = `/images?content_variant_id=${encodeURIComponent(contentIdInput.value.trim())}&image_asset_id=${encodeURIComponent(response.data.image_asset_id)}`;
+        }
+      });
+
+      markModifiedButton.addEventListener("click", async function () {
+        const response = await runAction("content_mark_modified", {
+          content_variant_id: contentIdInput.value.trim(),
+          body: contentBodyUpdateInput.value.trim() || null,
+        });
+        setResult(response);
+        if (response.ok) {
+          window.location.href = `/checks?content_variant_id=${encodeURIComponent(contentIdInput.value.trim())}&need_recheck=1`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

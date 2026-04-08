@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#c9d7fd",
+                    "primary": "#002e70",
+                    "on-primary-fixed": "#001944",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#191c1e",
+                    "surface-bright": "#f7f9fc",
+                    "on-secondary-fixed": "#0c1b38",
+                    "on-secondary-fixed-variant": "#394666",
+                    "tertiary-fixed-dim": "#ffb692",
+                    "surface-container-low": "#f2f4f7",
+                    "surface-tint": "#335bac",
+                    "primary-fixed": "#d9e2ff",
+                    "tertiary": "#572100",
+                    "surface-container-high": "#e6e8eb",
+                    "surface": "#f7f9fc",
+                    "tertiary-fixed": "#ffdbcb",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#793000",
+                    "on-primary-fixed-variant": "#124393",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#d8dadd",
+                    "outline-variant": "#c3c6d3",
+                    "background": "#f7f9fc",
+                    "secondary-fixed-dim": "#b9c6ec",
+                    "on-tertiary-container": "#ff9e6d",
+                    "surface-container-highest": "#e0e3e6",
+                    "inverse-on-surface": "#eff1f4",
+                    "on-tertiary-fixed": "#341100",
+                    "surface-container": "#eceef1",
+                    "on-primary-container": "#97b5ff",
+                    "on-surface-variant": "#434651",
+                    "inverse-primary": "#b0c6ff",
+                    "surface-variant": "#e0e3e6",
+                    "inverse-surface": "#2d3133",
+                    "secondary": "#515e7f",
+                    "tertiary-container": "#7b3100",
+                    "on-tertiary": "#ffffff",
+                    "primary-container": "#144494",
+                    "primary-fixed-dim": "#b0c6ff",
+                    "on-surface": "#191c1e",
+                    "on-secondary-container": "#505d7e",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#d9e2ff",
+                    "outline": "#747783",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full z-40 bg-slate-50 dark:bg-slate-900 h-screen w-64 border-r-0 flex flex-col font-['Inter'] body-md text-sm tracking-tight">
+<div class="p-6 flex flex-col gap-1">
+<h1 class="text-lg font-bold text-slate-900 dark:text-slate-50">流量工厂</h1>
+<p class="text-xs text-on-surface-variant opacity-70">生产流水线</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="search">search</span>发现
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="database">database</span>主题池
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="science">science</span>内容实验室
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="image_search">image_search</span>图库实验室
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="fact_check">fact_check</span>质检中心
+            </a>
+<a class="flex items-center px-3 py-2.5 bg-[#c9d7fd] text-[#144494] border-l-4 border-[#144494] font-semibold" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history">history</span>回顾
+            </a>
+</nav>
+<div class="mt-auto px-3 py-6 space-y-1">
+<a class="flex items-center px-3 py-2 text-slate-600 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>设置
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-600 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help">help</span>帮助
+            </a>
+</div>
+</aside>
+<!-- Main Canvas Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 h-16 bg-white/85 dark:bg-slate-950/85 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 sticky top-0 z-30">
+<div class="flex items-center gap-8">
+<span class="text-md font-black tracking-tighter text-[#144494]">内容生产管线</span>
+<nav class="flex gap-6">
+<a class="text-[#144494] font-bold font-['Inter'] label-sm uppercase tracking-wider" href="#">复盘台</a>
+<a class="text-slate-400 dark:text-slate-500 font-['Inter'] label-sm uppercase tracking-wider hover:text-[#144494] transition-all" href="#">主题 A</a>
+<a class="text-slate-400 dark:text-slate-500 font-['Inter'] label-sm uppercase tracking-wider hover:text-[#144494] transition-all" href="#">内容变体 B</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low px-3 py-1.5 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48" placeholder="搜索历史内容..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="notifications">notifications</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white text-xs font-bold">JD</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-8 space-y-8">
+<!-- 顶部：发布概览统计 -->
+<section class="grid grid-cols-4 gap-6">
+<div class="bg-surface-container-lowest p-6 flex flex-col gap-1">
+<span class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">本月发布总数</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-on-surface tracking-tighter">128</span>
+<span class="text-xs text-green-600 font-bold flex items-center">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span> +12%
+                        </span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 flex flex-col gap-1">
+<span class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">平均互动率</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-on-surface tracking-tighter">4.82%</span>
+<span class="text-xs text-on-surface-variant font-medium">基准 3.5%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 col-span-2 flex flex-col gap-1 bg-gradient-to-br from-white to-[#f0f4ff]">
+<span class="text-xs font-medium text-primary uppercase tracking-widest">最佳选题</span>
+<div class="flex items-center justify-between mt-1">
+<span class="text-xl font-bold text-on-surface">《AI 提效工具的 5 个进阶用法》</span>
+<span class="bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-bold rounded-sm">爆款预期</span>
+</div>
+</div>
+</section>
+<!-- 中部与右侧：布局 -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- 左侧：已发布列表 -->
+<div class="col-span-7 space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-sm font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="list_alt">list_alt</span>
+                            历史发布内容 (24)
+                        </h2>
+<div class="flex gap-2">
+<button class="px-2 py-1 bg-surface-container-high text-[10px] font-bold uppercase">今日</button>
+<button class="px-2 py-1 text-[10px] font-bold uppercase text-on-surface-variant hover:bg-surface-container-high">本周</button>
+</div>
+</div>
+<div class="space-y-3">
+<!-- Active Card -->
+<div class="bg-surface-container-lowest p-5 relative border-l-4 border-primary">
+<div class="flex justify-between items-start mb-2">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tight">2023.11.24 14:30</span>
+<span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black rounded-sm uppercase">TikTok</span>
+</div>
+<h3 class="text-base font-bold text-on-surface">深度解析：2024年独立开发者的生存现状</h3>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                    已发布
+                                </span>
+</div>
+</div>
+<!-- Normal Card -->
+<div class="bg-surface-container-lowest p-5 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tight">2023.11.24 10:15</span>
+<span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black rounded-sm uppercase">RedBook</span>
+</div>
+<h3 class="text-base font-bold text-on-surface">零基础入门 AI 绘图的 3 个关键 Prompt</h3>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                    已发布
+                                </span>
+</div>
+</div>
+<!-- Normal Card -->
+<div class="bg-surface-container-lowest p-5 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tight">2023.11.23 21:00</span>
+<span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black rounded-sm uppercase">WeChat</span>
+</div>
+<h3 class="text-base font-bold text-on-surface">周刊：10个值得关注的海外 AI 社区</h3>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                    已发布
+                                </span>
+</div>
+</div>
+<!-- Normal Card -->
+<div class="bg-surface-container-lowest p-5 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tight">2023.11.23 18:45</span>
+<span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black rounded-sm uppercase">TikTok</span>
+</div>
+<h3 class="text-base font-bold text-on-surface">快节奏生活下的数字化极简主义</h3>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                    已发布
+                                </span>
+</div>
+</div>
+</div>
+</div>
+<!-- 右侧：复盘详情面板 -->
+<div class="col-span-5 bg-surface-container-lowest border-l border-outline-variant/10 min-h-[600px] flex flex-col">
+<div class="p-6 border-b border-surface-container-high">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-sm font-black text-on-surface uppercase tracking-tight">Retro Panel / 复盘详情</h2>
+<span class="text-[10px] font-bold bg-secondary-container text-on-secondary-container px-2 py-0.5">ID: #RE-44210</span>
+</div>
+<!-- 对象回溯视图 -->
+<div class="space-y-4">
+<div class="flex items-start gap-4">
+<div class="w-1 bg-primary h-full absolute left-0"></div>
+<div class="flex flex-col gap-3 w-full">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="sensors">sensors</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Signal Origin</span>
+<span class="text-xs font-medium text-on-surface">独立开发者盈利榜单热议</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="topic">topic</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Topic Node</span>
+<span class="text-xs font-medium text-on-surface">生存现状 vs 盈利幻象</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified_user">verified_user</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Check Result</span>
+<span class="text-xs font-medium text-on-surface">评分 9.2 (Pass) / 关键词无违规</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 数据录入区 -->
+<div class="p-6 space-y-6">
+<div class="grid grid-cols-3 gap-4">
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase">点赞数</label>
+<input class="w-full bg-surface-container-low border-b border-outline focus:border-primary border-t-0 border-x-0 text-sm font-bold py-2 focus:ring-0" type="number" value="1240"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase">评论数</label>
+<input class="w-full bg-surface-container-low border-b border-outline focus:border-primary border-t-0 border-x-0 text-sm font-bold py-2 focus:ring-0" type="number" value="86"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase">阅读量</label>
+<input class="w-full bg-surface-container-low border-b border-outline focus:border-primary border-t-0 border-x-0 text-sm font-bold py-2 focus:ring-0" type="number" value="25800"/>
+</div>
+</div>
+<!-- 策略笔记 -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="text-[10px] font-bold text-tertiary uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="psychology">psychology</span>
+                                    策略笔记 (Strategy Notes)
+                                </label>
+<span class="text-[9px] text-on-surface-variant">AI 建议: 优化前 30s 留存</span>
+</div>
+<textarea class="w-full bg-surface-container-low border-none text-xs leading-relaxed focus:ring-0 p-3 resize-none" placeholder="记录本次发布的经验教训或模型优化方向..." rows="4">选题契合当下焦虑点，封面采用了强对比的冷色调，在 TikTok 上的点击率显著高于以往。建议：后续在脚本第二段加入更多具体盈利数据，增加可信度。下个周期应尝试针对“产品化”这一分支词进行深挖。</textarea>
+</div>
+</div>
+<!-- 动作按钮 -->
+<div class="mt-auto p-6 bg-surface-container-low/50">
+<button class="w-full bg-primary text-on-primary py-3 px-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-sm" data-icon="archive">archive</span>
+                            归档复盘 (Finalize Record)
+                        </button>
+<p class="text-[9px] text-center mt-3 text-on-surface-variant opacity-60">归档后将自动入库并触发模型微调反馈逻辑</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB - Only for Home/Dash but visible here for action flow as per JSON guidance if appropriate -->
+<!-- Suppressed on detailed page as per hierarchy rules -->
+</body></html>

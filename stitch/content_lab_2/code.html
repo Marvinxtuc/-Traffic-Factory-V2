@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Traffic Factory - Content Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#7b3100",
+                    "on-surface": "#191c1e",
+                    "outline": "#747783",
+                    "tertiary-fixed": "#ffdbcb",
+                    "on-primary-fixed": "#001944",
+                    "background": "#f7f9fc",
+                    "surface-variant": "#e0e3e6",
+                    "on-secondary-fixed": "#0c1b38",
+                    "on-secondary-container": "#505d7e",
+                    "surface-container": "#eceef1",
+                    "surface-bright": "#f7f9fc",
+                    "surface-dim": "#d8dadd",
+                    "outline-variant": "#c3c6d3",
+                    "primary-fixed": "#d9e2ff",
+                    "surface": "#f7f9fc",
+                    "on-secondary-fixed-variant": "#394666",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f2f4f7",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed-dim": "#ffb692",
+                    "secondary-container": "#c9d7fd",
+                    "on-tertiary-fixed": "#341100",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e0e3e6",
+                    "secondary": "#515e7f",
+                    "on-tertiary-fixed-variant": "#793000",
+                    "inverse-primary": "#b0c6ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#434651",
+                    "on-tertiary-container": "#ff9e6d",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#b9c6ec",
+                    "secondary-fixed": "#d9e2ff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#97b5ff",
+                    "tertiary": "#572100",
+                    "primary-fixed-dim": "#b0c6ff",
+                    "on-primary-fixed-variant": "#124393",
+                    "surface-tint": "#335bac",
+                    "primary": "#002e70",
+                    "on-background": "#191c1e",
+                    "primary-container": "#144494",
+                    "surface-container-high": "#e6e8eb",
+                    "inverse-on-surface": "#eff1f4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-header { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="fixed inset-y-0 left-0 flex flex-col h-screen w-64 flex-shrink-0 border-r border-transparent bg-slate-50 z-50">
+<div class="p-6">
+<span class="text-lg font-black tracking-tighter text-blue-900">Traffic Factory</span>
+<p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-1">Production Pipeline</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] body-md tracking-tight">Discovery</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-['Inter'] body-md tracking-tight">Topic Pool</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-blue-100/50 text-blue-900 border-l-4 border-blue-800 font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-['Inter'] body-md tracking-tight">Content Lab</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+<span class="font-['Inter'] body-md tracking-tight">Image Lab</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-['Inter'] body-md tracking-tight">Quality Gate</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-['Inter'] body-md tracking-tight">Retrospective</span>
+</a>
+</nav>
+<div class="mt-auto p-4 border-t border-slate-200/50">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-blue-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-blue-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="text-sm">Support</span>
+</a>
+<div class="mt-4 flex items-center gap-3 px-4 py-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional male editor with short hair and glasses in a brightly lit studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkneN8dBzys1TbnGKkznp_oThF9EeW3l0Kk-oCTTVC8Zj33aAv4HWoTF-aOnIWma2y_TgsS9qTGVk-xfUyFgn32qkym1_g_tNGX7YWWr8MekGKRKXKrKGIMSHufcZQlmfhXhad786PbGTYVuPcTaSfVqb6WM698ynqkA4pgV5MyVZWCvltPm4plAIxKYGlLDh9RGmnnkhEKnYPuHUTY0UQ9ot1ObVtqwLnB5P-l7cuUzEmIDAopdXI_escITNKvF5zC5RxuEc-SE0"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">Production Lead</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopAppBar Component -->
+<header class="flex justify-between items-center w-full px-8 sticky top-0 z-40 h-16 bg-white/85 backdrop-blur-md border-b border-slate-200/50">
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 font-['Inter'] label-sm uppercase tracking-wider">
+<span class="text-slate-400">Topic A</span>
+<span class="material-symbols-outlined text-slate-300 text-sm">chevron_right</span>
+<span class="text-blue-900 font-bold">Content B</span>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-low border-none rounded-sm text-xs px-10 py-2 w-64 focus:ring-1 focus:ring-primary focus:bg-white transition-all" placeholder="Search factory assets..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+</div>
+<div class="flex items-center gap-4 text-slate-400">
+<button class="hover:text-blue-900 transition-colors"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="hover:text-blue-900 transition-colors"><span class="material-symbols-outlined" data-icon="account_circle">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Workbench Grid Layout -->
+<div class="p-6 grid grid-cols-12 gap-6 flex-1 items-start">
+<!-- Left Panel: Topic Summary (Asymmetric Narrow) -->
+<section class="col-span-12 xl:col-span-3 space-y-6">
+<div class="bg-surface-container-lowest p-6 rounded-sm shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-['Inter'] font-bold text-xs uppercase tracking-widest text-slate-400">Topic Intelligence</h2>
+<span class="material-symbols-outlined text-blue-900" data-icon="info" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+<h3 class="text-xl font-bold mb-3 tracking-tight">Sustainable Urban Commuting</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+                        Exploring the intersection of electric micro-mobility and traditional public infrastructure in Tier-1 Asian cities.
+                    </p>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container-low rounded-sm">
+<span class="block font-['Inter'] label-sm uppercase text-[10px] text-slate-400 mb-1">Target Platforms</span>
+<div class="flex gap-2">
+<span class="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/10">RED BOOK</span>
+<span class="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/10">WECHAT</span>
+<span class="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/10">X</span>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low rounded-sm">
+<span class="block font-['Inter'] label-sm uppercase text-[10px] text-slate-400 mb-1">Brand Voice</span>
+<p class="text-sm font-medium">Authoritative, Visionary</p>
+</div>
+</div>
+</div>
+<div class="bg-tertiary-fixed p-6 rounded-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="auto_awesome">auto_awesome</span>
+<h4 class="font-bold text-tertiary text-sm">AI Suggestion</h4>
+</div>
+<p class="text-sm text-tertiary leading-snug">
+                        "Try focusing on the 'Cost per Mile' angle for higher engagement in WeChat articles."
+                    </p>
+</div>
+</section>
+<!-- Center Area: Multi-tab Editor -->
+<section class="col-span-12 lg:col-span-8 xl:col-span-6">
+<div class="bg-surface-container-lowest rounded-sm shadow-sm overflow-hidden flex flex-col min-h-[600px]">
+<!-- Editor Tabs -->
+<div class="flex bg-surface-container-low border-b border-outline-variant/15">
+<button class="px-6 py-4 text-xs font-bold border-b-2 border-primary bg-white flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            Red Book
+                        </button>
+<button class="px-6 py-4 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-2 border-b-2 border-transparent">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            WeChat
+                        </button>
+<button class="px-6 py-4 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-2 border-b-2 border-transparent">
+<span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                            Twitter
+                        </button>
+<div class="ml-auto flex items-center px-4">
+<span class="text-[10px] font-mono text-slate-400 bg-surface-container-high px-2 py-1 rounded">AUTOSAVE: ON</span>
+</div>
+</div>
+<!-- Editor Toolbar -->
+<div class="p-3 border-b border-outline-variant/15 flex gap-2 items-center">
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-icon="auto_fix_high" style="font-variation-settings: 'FILL' 1;">auto_fix_high</span>
+                            AI Rewrite
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-on-surface text-xs font-bold rounded-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="tune">tune</span>
+                            Tone Adjust
+                        </button>
+<div class="h-6 w-[1px] bg-outline-variant/30 mx-2"></div>
+<button class="p-2 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-xl">format_bold</span></button>
+<button class="p-2 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-xl">format_italic</span></button>
+<button class="p-2 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-xl">link</span></button>
+<button class="p-2 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-xl">add_photo_alternate</span></button>
+</div>
+<!-- Main Text Area -->
+<div class="p-8 flex-1">
+<h1 class="text-2xl font-black mb-6 text-slate-900 border-none focus:ring-0 w-full outline-none leading-tight" contenteditable="true">
+                            Why the E-Bike Revolution is Reshaping Our Cities
+                        </h1>
+<div class="text-base text-slate-700 leading-relaxed min-h-[400px] focus:ring-0 outline-none" contenteditable="true">
+                            For years, the urban commute was a binary choice: the cramped subway or the gridlocked car. But as we look at the streets of 2024, a new player has claimed the middle ground. The electric bike isn't just a gadget; it's a infrastructure bypass. 
+                            <br/><br/>
+                            In cities like Shanghai and Singapore, the 'last mile' problem is being solved not by government initiatives, but by individual adoption. The metrics are undeniable. When you compare the energy efficiency of a 40lb e-bike versus a 4,000lb electric SUV, the environmental winner is clear.
+                            <br/><br/>
+                            What does this mean for the future of commercial real estate? If parking lots are no longer a necessity, how will we re-purpose the square footage?
+                        </div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Content Attributes -->
+<section class="col-span-12 lg:col-span-4 xl:col-span-3 space-y-6">
+<!-- Metadata Card -->
+<div class="bg-surface-container-lowest p-6 rounded-sm shadow-sm border-l-4 border-primary">
+<h2 class="font-['Inter'] font-bold text-xs uppercase tracking-widest text-slate-400 mb-6">Execution Details</h2>
+<div class="space-y-6">
+<div>
+<label class="block font-['Inter'] label-sm uppercase text-[10px] text-slate-400 mb-2">Target Keywords</label>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant text-[11px] rounded-sm flex items-center gap-1">
+                                    micro-mobility <span class="material-symbols-outlined text-[12px] cursor-pointer">close</span>
+</span>
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant text-[11px] rounded-sm flex items-center gap-1">
+                                    urban tech <span class="material-symbols-outlined text-[12px] cursor-pointer">close</span>
+</span>
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant text-[11px] rounded-sm flex items-center gap-1">
+                                    future-city <span class="material-symbols-outlined text-[12px] cursor-pointer">close</span>
+</span>
+<button class="px-2 py-1 border border-dashed border-outline-variant text-slate-400 text-[11px] rounded-sm hover:border-primary hover:text-primary transition-all">+ Add</button>
+</div>
+</div>
+<div>
+<label class="block font-['Inter'] label-sm uppercase text-[10px] text-slate-400 mb-2">Primary CTA</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none border-b border-outline-variant focus:border-primary text-xs p-2 outline-none transition-colors" type="text" value="Download Mobility Report"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-surface-container-low rounded-sm">
+<span class="block font-['Inter'] label-sm uppercase text-[10px] text-slate-400 mb-1">Word Count</span>
+<p class="text-lg font-black text-blue-900">342<span class="text-xs font-normal text-slate-400 ml-1">/ 500</span></p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-sm">
+<span class="block font-['Inter'] label-sm uppercase text-[10px] text-slate-400 mb-1">Score</span>
+<p class="text-lg font-black text-green-600">88<span class="text-xs font-normal text-slate-400 ml-1">%</span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- Asset Library Preview -->
+<div class="bg-surface-container-lowest p-6 rounded-sm shadow-sm">
+<h2 class="font-['Inter'] font-bold text-xs uppercase tracking-widest text-slate-400 mb-4">Attached Visuals</h2>
+<div class="grid grid-cols-2 gap-2">
+<div class="aspect-square bg-slate-100 overflow-hidden relative group">
+<img class="w-full h-full object-cover" data-alt="clean minimal photo of a modern electric commuter bicycle leaning against a textured concrete wall in an urban setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQAwR1JyqU0POdr3FkUjrVt_UTARdy_qMfQgdKrZpgDK3ujtLOR5RITne1s3iDGEWkS1TfBbtYov3yrQvG5vy54wb4VDhnrTJslWnmwqWWYAh8jGXbwFGheOW2r3QVH3iZkctZGQJOtyjfK9mAscf2s7QLJrvS6sZ64CvO1E5-Dxinl0l5j4nGFoQyFW7X78XcRtDUFzon7la3Lsvqjda2IWwEkG3j_wycr2VyPeE315ufmmFygplNgzWHSDECaL2PyhIfZMVAz6I"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white">zoom_in</span>
+</div>
+</div>
+<div class="aspect-square bg-slate-100 overflow-hidden relative group">
+<img class="w-full h-full object-cover" data-alt="city traffic at dusk with motion blur of lights and modern buses in a futuristic metropolitan area" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy6RVJD7HGZmMXrOns3zIkUFM6zXBnvvvl9QVgPgByl52jNClStXj8NnNYdcweobTMeQnZ_fsBxwHMsOa4OeVASwfGW0buqXLiSO4QpGirpNxS--JOVS0qERdUmepo3WuImYjEQZmq9XS6LXjBIrf87AEozzMrCjpiZ9HCpZmnHO23ixbNyfMUOUXWI2OkqK8U6P9Kc-h3lK-SvbxsEjJwd-FlxTCa2FhAKWBJBGw9BnUo2SDxwCfzmdWP2Y-50sOHEWk0pXE9bhs"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white">zoom_in</span>
+</div>
+</div>
+<div class="aspect-square bg-slate-100 border border-dashed border-outline-variant flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-slate-300">add</span>
+</div>
+</div>
+</div>
+<button class="w-full py-4 bg-primary text-white font-bold tracking-widest text-xs uppercase rounded-sm shadow-lg shadow-primary/20 hover:translate-y-[-1px] active:translate-y-[0px] transition-all">
+                    Send to Quality Gate
+                </button>
+</section>
+</div>
+</main>
+<!-- Floating Action Button - Supressed as per Task Logic for Editor/Details focus -->
+</body></html>

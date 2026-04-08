@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Content Lab - Traffic Factory V1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eceef1",
+                        "on-secondary-fixed": "#0c1b38",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "on-surface-variant": "#434651",
+                        "background": "#f7f9fc",
+                        "secondary-fixed": "#d9e2ff",
+                        "on-primary-fixed-variant": "#124393",
+                        "on-tertiary-fixed": "#341100",
+                        "secondary-container": "#c9d7fd",
+                        "inverse-primary": "#b0c6ff",
+                        "surface-container-highest": "#e0e3e6",
+                        "primary-fixed": "#d9e2ff",
+                        "inverse-on-surface": "#eff1f4",
+                        "on-tertiary-container": "#ff9e6d",
+                        "surface-variant": "#e0e3e6",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-secondary-fixed-variant": "#394666",
+                        "on-secondary-container": "#505d7e",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#572100",
+                        "on-primary-fixed": "#001944",
+                        "surface-bright": "#f7f9fc",
+                        "secondary-fixed-dim": "#b9c6ec",
+                        "tertiary-fixed-dim": "#ffb692",
+                        "outline": "#747783",
+                        "surface": "#f7f9fc",
+                        "tertiary-container": "#7b3100",
+                        "outline-variant": "#c3c6d3",
+                        "on-background": "#191c1e",
+                        "primary-container": "#144494",
+                        "secondary": "#515e7f",
+                        "surface-container-low": "#f2f4f7",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d8dadd",
+                        "on-surface": "#191c1e",
+                        "surface-container-high": "#e6e8eb",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "on-primary-container": "#97b5ff",
+                        "on-tertiary-fixed-variant": "#793000",
+                        "on-primary": "#ffffff",
+                        "primary": "#002e70",
+                        "surface-tint": "#335bac",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="flex flex-col fixed left-0 top-0 h-full z-40 bg-white dark:bg-slate-900 h-screen w-64 border-r border-slate-200 dark:border-slate-800 font-['Inter'] text-sm font-medium transition-all duration-150 ease-in-out">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="terminal">terminal</span>
+</div>
+<div class="flex flex-col">
+<span class="text-blue-700 font-black tracking-tight">Enterprise</span>
+<span class="text-[10px] text-slate-500">V1.0.4</span>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<div class="px-3 py-2 text-slate-400 label-sm uppercase tracking-widest text-[10px] font-bold">Main Navigation</div>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="explore">explore</span> Discovery
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="database">database</span> Topic Pool
+            </a>
+<!-- Active: Content Lab -->
+<a class="flex items-center gap-3 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-l-4 border-blue-700 transition-colors rounded-sm font-semibold" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit_note">edit_note</span> Content Lab
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="image">image</span> Image Lab
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="fact_check">fact_check</span> Quality Gate
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="history">history</span> Retrospective
+            </a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span> Help Center
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span> Account
+            </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopAppBar (Authority: JSON) -->
+<header class="flex justify-between items-center h-16 px-6 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-['Inter'] antialiased">
+<div class="flex items-center gap-4">
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Traffic Factory V1</h1>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<span class="text-sm font-medium text-slate-500">Content Lab / Project "Green Horizon"</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<input class="bg-surface-container-low border-none text-xs px-4 py-2 w-64 rounded-sm focus:ring-1 focus:ring-primary outline-none" placeholder="Search insights..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-slate-500 hover:text-slate-900 transition-colors" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-slate-500 hover:text-slate-900 transition-colors" data-icon="settings">settings</button>
+<div class="w-8 h-8 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close-up portrait of a professional corporate user profile placeholder avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGn8kewtJ1wT_XoMQK-0Pbq4D1v1WN1_VJX5A9LiKPNqsPsm1GEY4BJwhb7KSc8Ofdgt6nvQW2kqCxxANDY13OVMILMA2mipQbLznjzrTDvtwDTdWmhxJ4jkOjJqc2pV1cNqUQsFQTLGqc1fs9aRZtnqFKesk_8TE80Rp5y8atg77Q1ayRuQvmSy2GO_AlbhRmaprAPlAH98iQnR0SjTfRk7X_DTydgU5310Dzra-eIxWJ-7MfzWyfeNUkxJ7qZvk6gk_X7Pg7UDY"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 flex flex-col gap-6 flex-1 overflow-y-auto">
+<!-- Read-only Topic Summary -->
+<section class="bg-surface-container-lowest p-6 border-b border-outline-variant/15 flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary font-bold label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span> Source Topic Summary
+                </div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="md:col-span-3">
+<h2 class="headline-sm font-bold text-on-surface">Sustainable Urban Gardening in Compact High-Rise Environments</h2>
+<p class="body-md text-on-surface-variant mt-2 leading-relaxed">Focus on hydroponic systems, vertical planters, and light-optimization for indoor spaces. Targeting young professionals in tier-1 cities looking for lifestyle wellness and sustainability hacks.</p>
+</div>
+<div class="flex flex-col gap-2 border-l border-outline-variant/30 pl-8">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Keywords</span>
+<span class="font-medium">Hydroponics, Vertical, Urban</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Tone</span>
+<span class="font-medium">Educational, Minimalist</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Model</span>
+<span class="font-medium">T-Engine-v4</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Platform Selection & Platform-Specific View -->
+<div class="flex flex-col flex-1">
+<div class="flex items-center gap-1 border-b border-outline-variant/20 mb-6">
+<button class="px-6 py-3 border-b-2 border-primary text-primary font-bold text-sm">WeChat</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors font-medium text-sm">Xiaohongshu</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors font-medium text-sm">LinkedIn</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors font-medium text-sm">Twitter/X</button>
+</div>
+<div class="grid grid-cols-12 gap-8 flex-1">
+<!-- Left: AI Editor Workspace -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant/20 flex flex-col h-[600px]">
+<!-- Editor Toolbar -->
+<div class="px-4 py-3 border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-low/30">
+<div class="flex items-center gap-4">
+<div class="flex gap-1">
+<button class="p-1.5 hover:bg-surface-container-high rounded-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]" data-icon="format_bold">format_bold</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]" data-icon="format_italic">format_italic</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]" data-icon="link">link</span></button>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant/40"></div>
+<div class="flex items-center gap-2 text-xs font-medium text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="history_edu">history_edu</span>
+                                        Auto-saved 2m ago
+                                    </div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-highest text-on-surface text-xs font-bold hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-xs" data-icon="magic_button">magic_button</span> Polish
+                                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-highest text-on-surface text-xs font-bold hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-xs" data-icon="refresh">refresh</span> Regenerate
+                                    </button>
+</div>
+</div>
+<!-- Editor Content Area -->
+<div class="flex-1 p-8 overflow-y-auto">
+<div class="max-w-2xl mx-auto prose prose-sm">
+<h3 class="font-bold text-xl mb-4">The Invisible Forest: How to Turn Your Studio into a Carbon Sink</h3>
+<p class="body-md leading-relaxed text-on-surface/90">
+                                         Living in a city doesn't mean living without nature. Most urban professionals spend 90% of their time indoors, yet our spaces are often void of living oxygen. Traditional gardening seems out of reach when you only have a few square feet of floor space and windows that face a brick wall.
+                                    </p>
+<p class="body-md leading-relaxed text-on-surface/90 mt-4">
+                                        That's where vertical hydroponics changes the game. By removing soil from the equation, we eliminate 80% of the weight and 100% of the mess. Imagine a wall-mounted system that consumes less water than your morning shower while producing enough kale for a week of smoothies.
+                                    </p>
+<div class="my-6 p-4 bg-tertiary/5 border-l-4 border-tertiary">
+<div class="flex items-center gap-2 text-tertiary font-bold label-sm mb-2">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span> AI INSIGHT
+                                        </div>
+<p class="text-xs italic text-on-tertiary-fixed-variant">Try adding a personal anecdote here to increase WeChat engagement by approximately 14% based on previous performance metrics.</p>
+</div>
+<p class="body-md leading-relaxed text-on-surface/90 mt-4">
+                                        In this guide, we'll break down the three essential pillars of compact urban farming: nutrient-film techniques, spectral light optimization, and the art of space-efficient pruning. 
+                                    </p>
+</div>
+</div>
+</div>
+<!-- Error Variant Example -->
+<div class="bg-error-container/20 border border-error/20 p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error" data-icon="error">error</span>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-error-container">Generation Failed</span>
+<span class="text-xs text-on-error-container/70">The model failed to generate variant #3 due to a context window timeout.</span>
+</div>
+</div>
+<button class="text-xs font-bold text-error underline hover:no-underline">Retry Variant</button>
+</div>
+</div>
+<!-- Right: Metadata & Actions Panel -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- Metadata Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 p-6 flex flex-col gap-6">
+<div class="flex flex-col gap-4">
+<label class="label-sm font-bold text-on-surface-variant flex items-center gap-2 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-xs" data-icon="title">title</span> SEO Optimized Title
+                                </label>
+<input class="w-full bg-surface-container-low border-none border-b border-primary text-sm py-2 px-1 focus:ring-0 outline-none" type="text" value="Urban Hydroponics: The Studio Apartment Revolution"/>
+</div>
+<div class="flex flex-col gap-4">
+<label class="label-sm font-bold text-on-surface-variant flex items-center gap-2 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-xs" data-icon="sell">sell</span> Distribution Tags
+                                </label>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container-high px-2 py-1 text-[11px] font-medium text-on-surface-variant border border-outline-variant/20 flex items-center gap-1">#UrbanFarming <button class="material-symbols-outlined text-[12px]" data-icon="close">close</button></span>
+<span class="bg-surface-container-high px-2 py-1 text-[11px] font-medium text-on-surface-variant border border-outline-variant/20 flex items-center gap-1">#Wellness <button class="material-symbols-outlined text-[12px]" data-icon="close">close</button></span>
+<span class="bg-surface-container-high px-2 py-1 text-[11px] font-medium text-on-surface-variant border border-outline-variant/20 flex items-center gap-1">#Sustainability <button class="material-symbols-outlined text-[12px]" data-icon="close">close</button></span>
+<button class="bg-primary/5 px-2 py-1 text-[11px] font-bold text-primary border border-primary/20">+ Add Tag</button>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<label class="label-sm font-bold text-on-surface-variant flex items-center gap-2 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-xs" data-icon="ads_click">ads_click</span> Primary CTA
+                                </label>
+<select class="w-full bg-surface-container-low border-none text-sm py-2 px-1 focus:ring-0 outline-none">
+<option>Sign up for Early Access</option>
+<option>Download PDF Guide</option>
+<option>Book a Consultation</option>
+</select>
+</div>
+<div class="flex flex-col gap-4">
+<label class="label-sm font-bold text-on-surface-variant flex items-center gap-2 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-xs" data-icon="image">image</span> Cover Preview
+                                </label>
+<div class="aspect-video bg-surface-container-low border border-outline-variant/20 overflow-hidden group relative">
+<img alt="Preview Image" class="w-full h-full object-cover" data-alt="ultra-minimalist indoor vertical hydroponic garden wall in a bright white modern apartment studio with warm ambient sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnqogIMfJv72BGLPlbPnsVAJC4h5DKMwpfdRV7-0jAQmzG_yK0WlkR2pmZX5J3WIk40urqK__kswaQ0IjvUtUxzLeJZWLoGn0suY8bBmxCZtLVKC1zdv1vEOxHq1r1ckhp67ubsTYK61q0fuC8iuuP1lhx8vlshk_-ergrWo3NR3gvA4xTZLEWmSLEJmtoRZVZ5nIw8f0De-g4v7Ta92m-qi91YR6JHuFMrKdYRJOi0Vzeg7yY26fr-1Ih70B61RbY3GE4_iJsLQQ"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<button class="bg-white text-on-surface px-4 py-2 text-xs font-bold rounded-sm">Change Image</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Final Action -->
+<div class="mt-auto flex justify-end">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white font-bold py-4 rounded-sm hover:opacity-95 shadow-lg active:scale-[0.98] transition-all">
+                                Send to Quality Gate
+                                <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#c9d7fd",
+                        "primary": "#002e70",
+                        "on-primary-fixed": "#001944",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "surface-bright": "#f7f9fc",
+                        "on-secondary-fixed": "#0c1b38",
+                        "on-secondary-fixed-variant": "#394666",
+                        "tertiary-fixed-dim": "#ffb692",
+                        "surface-container-low": "#f2f4f7",
+                        "surface-tint": "#335bac",
+                        "primary-fixed": "#d9e2ff",
+                        "tertiary": "#572100",
+                        "surface-container-high": "#e6e8eb",
+                        "surface": "#f7f9fc",
+                        "tertiary-fixed": "#ffdbcb",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#793000",
+                        "on-primary-fixed-variant": "#124393",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d8dadd",
+                        "outline-variant": "#c3c6d3",
+                        "background": "#f7f9fc",
+                        "secondary-fixed-dim": "#b9c6ec",
+                        "on-tertiary-container": "#ff9e6d",
+                        "surface-container-highest": "#e0e3e6",
+                        "inverse-on-surface": "#eff1f4",
+                        "on-tertiary-fixed": "#341100",
+                        "surface-container": "#eceef1",
+                        "on-primary-container": "#97b5ff",
+                        "on-surface-variant": "#434651",
+                        "inverse-primary": "#b0c6ff",
+                        "surface-variant": "#e0e3e6",
+                        "inverse-surface": "#2d3133",
+                        "secondary": "#515e7f",
+                        "tertiary-container": "#7b3100",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#144494",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "on-surface": "#191c1e",
+                        "on-secondary-container": "#505d7e",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#d9e2ff",
+                        "outline": "#747783",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface overflow-hidden">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full z-40 h-screen w-64 border-r-0 flex flex-col bg-slate-50 dark:bg-slate-900 font-['Inter'] body-md text-sm tracking-tight">
+<div class="p-6 flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary-container rounded-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">factory</span>
+</div>
+<div>
+<h1 class="text-lg font-bold text-slate-900 dark:text-slate-50 leading-tight">流量工厂</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60">生产流水线</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 mt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 transition-transform" data-icon="search">search</span>
+<span>发现</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 transition-transform" data-icon="database">database</span>
+<span>主题池</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 transition-transform" data-icon="science">science</span>
+<span>内容实验室</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#c9d7fd] text-[#144494] border-l-4 border-[#144494] font-semibold transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 transition-transform" data-icon="image_search" style="font-variation-settings: 'FILL' 1;">image_search</span>
+<span>图库实验室</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 transition-transform" data-icon="fact_check">fact_check</span>
+<span>质检中心</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-sm group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 transition-transform" data-icon="history">history</span>
+<span>回顾</span>
+</a>
+</nav>
+<div class="p-4 space-y-1 border-t border-slate-200/30">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all rounded-sm group" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="settings">settings</span>
+<span class="text-xs">设置</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all rounded-sm group" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span>
+<span class="text-xs">帮助</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 right-0 h-16 bg-white/85 dark:bg-slate-950/85 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 flex justify-between items-center px-6 z-30 ml-64 max-w-[calc(100%-16rem)] w-full">
+<div class="flex items-center gap-6">
+<span class="text-md font-black tracking-tighter text-[#144494] uppercase">图片工坊 (Image Lab)</span>
+<div class="h-4 w-[1px] bg-outline-variant/30"></div>
+<nav class="flex gap-4">
+<span class="text-[#144494] font-bold text-[10px] uppercase tracking-wider cursor-pointer">主题 A</span>
+<span class="text-slate-400 dark:text-slate-500 text-[10px] uppercase tracking-wider cursor-pointer hover:text-[#144494] transition-all">内容变体 B</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low px-3 py-1.5 flex items-center gap-2 rounded-sm border-b border-transparent focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-sm text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-transparent border-none text-xs focus:ring-0 w-48 p-0" placeholder="搜索资源..." type="text"/>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:opacity-100 opacity-80" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-100 opacity-80" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 h-screen flex overflow-hidden">
+<!-- Left Column: Copy Ref & Templates -->
+<section class="w-80 flex flex-col bg-surface-container-low border-r border-outline-variant/10 overflow-y-auto">
+<div class="p-6 space-y-8">
+<!-- Copy Reference -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">文案参考</label>
+<span class="text-[10px] text-primary bg-secondary-container px-1.5 py-0.5 rounded-sm">AI 提取中</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-sm shadow-sm border-l-2 border-primary">
+<h4 class="text-xs font-bold text-on-surface mb-2">内容片段 #042</h4>
+<p class="text-xs leading-relaxed text-on-surface-variant">
+                            "在数字化浪潮中，单人创业者需要更精准的工具。流量工厂通过AI驱动的自动化流水线，将原本繁琐的内容生产缩减至分钟级..."
+                        </p>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="text-[9px] bg-surface-container px-2 py-1 rounded-full text-on-surface-variant">#数字化</span>
+<span class="text-[9px] bg-surface-container px-2 py-1 rounded-full text-on-surface-variant">#自动化流水线</span>
+<span class="text-[9px] bg-surface-container px-2 py-1 rounded-full text-on-surface-variant">#未来主义</span>
+</div>
+</div>
+</div>
+<!-- Template Library -->
+<div class="space-y-4">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">视觉风格模板</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-high rounded-sm overflow-hidden mb-2 border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="minimalist abstract graphic with clean lines and soft blue tones professional tech aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtD7BvpIwoM7CZrGa_To4gh5a6L5imkHMjNPVY1Mfs6If00qEgFgPPq4_rZEyacwVGAUkyU4q711WKCim7td7Kjtsg8CWRx5hfCZUI0Qt-9NeEr5pkcCLaL8AH6poRmtTPVuTRibUT150ApsAQAWQy5hDncmDqu5UxKOuI1bzyC7lchPcaFU8AqbiXBPd46cOevMy0xah71ImbgNpEFDab2tpXYfZY1KpraZR4FhrOtTfF_Jun4wTv8GO6BbPftBhp85Pnu9hjuzQ"/>
+</div>
+<p class="text-[11px] font-bold text-primary text-center">极简科技</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-high rounded-sm overflow-hidden mb-2 border-2 border-transparent hover:border-outline-variant transition-all">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100" data-alt="vibrant 3D abstract shapes with neon gradients and cinematic lighting industrial design feel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5seQdOz8o3Lxx7E2IET91tZwYW1K6TXXoqqLLNWA8H5g13tuSCsBacXi6oYAWa4UKmgNwF02nD9nXLq3zDk_ZjQKEbxQUdW28rJ1VGAWhO9g6-vIggaEi5uuqCHNa7BgJla54ksuxOTK7aDRrdKyBuqtgnJHHVUPVp7xY7HI1xc_F-qQlujrO867jNOFihCQtnT-B_xc0Sje6VbqbuJKe-V_RQ3_LxkkBgD9CZ3BEeiuRY-18iFd1lxjXkls8t-6YUOtPCzT7jGo"/>
+</div>
+<p class="text-[11px] text-on-surface-variant text-center">工业未来</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-high rounded-sm overflow-hidden mb-2 border-2 border-transparent hover:border-outline-variant transition-all">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100" data-alt="black and white architectural photography with high contrast and geometric shadows professional editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv8a7eAbcNQHwo3tZTmWeWPopfOlnZE3diq-Nl4pYMPtxHgunP6esxzEn1qLiC6zVobNnXF5MKXZ_F3nzSHfmZgsMa2UVr9BeNxVBysYKcaKtZJkn2SYAgEqnOBFky145f5_dtwsZ15GaLCrgKqrIxO0ebDqyeu_YcJKMi7494B7ePlWbeGH7na2xqtY4F9y99tl5k5G6L10c9GyLKw7zQFMHkn9OCmnvHYqDhpoi8sbjHp9Wuqp4zpWEc6Ln72_TQnH2gN--uBuw"/>
+</div>
+<p class="text-[11px] text-on-surface-variant text-center">黑白纪实</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-high rounded-sm overflow-hidden mb-2 border-2 border-transparent hover:border-outline-variant transition-all">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100" data-alt="hand-drawn organic pencil sketch style with soft textured paper background and delicate lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw5DQyAL45I4zbwQCfTE8edHczhd9N3u85GFWRTq7qwyyUS2rSHUwiCZKjWdrS8x9ijnazUZ-BPsFplDjWYzHe2K2j0reHkqmpzMAD4zWdbrFMo0WjsHpcFW9GjkrlPYnS30sqfVmnuuO6NoMmUYh1yZ_nrsfZqtAASyt1x1KQhiSEJef2riBTz93EXi8QKWCDubqSY_YL3LO8KV7Q7eFcOC2iDo9Z0RQIYFq-wEBjVIhRjhbUphphIclB02uTGqETJ1MHVy2GI_U"/>
+</div>
+<p class="text-[11px] text-on-surface-variant text-center">人文手绘</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Center Column: Main Workspace -->
+<section class="flex-1 bg-surface flex flex-col relative">
+<!-- Canvas Header -->
+<div class="h-12 border-b border-outline-variant/10 flex items-center justify-between px-6 bg-surface-container-lowest/50">
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-bold text-on-surface-variant bg-surface-container px-2 py-1 rounded-sm">画布 1080x1080</span>
+<div class="flex items-center gap-2">
+<button class="p-1 hover:bg-surface-container rounded-sm transition-colors"><span class="material-symbols-outlined text-sm" data-icon="zoom_in">zoom_in</span></button>
+<button class="p-1 hover:bg-surface-container rounded-sm transition-colors"><span class="material-symbols-outlined text-sm" data-icon="zoom_out">zoom_out</span></button>
+<span class="text-[10px] text-on-surface-variant">75%</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 bg-surface-container-highest text-on-surface text-[11px] font-bold rounded-sm hover:brightness-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-xs" data-icon="refresh">refresh</span> 重新生成
+                    </button>
+</div>
+</div>
+<!-- Image Grid Workspace -->
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-4xl mx-auto space-y-8">
+<!-- Main Result -->
+<div class="relative group aspect-video bg-surface-container-highest rounded-sm overflow-hidden shadow-2xl border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="A futuristic assembly line processing glowing digital content blocks in a clean high-tech laboratory setting with blue and white lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJEs-m-A6IjoVhbkhDBT7jLBJ3UnqvwNQij61QnIl103vOXawPsksjzHxSvrSIENdWptAYCRR3v8-mkBw-vMQWSuwEtKmN4g-JeecRwCC_x2KOu8mgWz8-QfI1KR-rLrs0ow9jqSdHu0EmQSPmGftirVd1uToCwuGpd9HxCQFZXkQf5CJXSEPWtl238b-5YmiLjvNDvIzBcc3FFK8s4-ulZejyV-xZmn0dyCMHJr5N7YU93CxUajy61cBzE6DiIR7fdqKam8kf9E4"/>
+<!-- Progress Indicator Overlay (Simulated) -->
+<div class="absolute top-0 left-0 w-full h-[2px] bg-tertiary overflow-hidden">
+<div class="w-full h-full bg-tertiary-fixed-dim animate-pulse"></div>
+</div>
+<div class="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="bg-white/90 backdrop-blur px-3 py-2 rounded-sm text-primary text-xs font-bold flex items-center gap-2 shadow-lg">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span> 下载
+                            </button>
+<button class="bg-primary px-3 py-2 rounded-sm text-white text-xs font-bold flex items-center gap-2 shadow-lg">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> 选用
+                            </button>
+</div>
+</div>
+<!-- Variations -->
+<div class="grid grid-cols-3 gap-6">
+<div class="aspect-square bg-surface-container-high rounded-sm border-2 border-transparent hover:border-primary cursor-pointer transition-all relative overflow-hidden group">
+<img class="w-full h-full object-cover" data-alt="abstract tech visualization with light trails and crystalline structures professional background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8bv2CeZp0vZaugdmEBspwnTYR0wM6jxaUsx4pwCE1g5DwoNlq1DgCyEleY77FUGtTwaU3zIe1bqIbwBEm7mrews6ZMbkjiacT_VYZdRXMV1lU61ccLJP3jWROwuhEwbQsSAElXE1shbw8Qdze_fGP_D-O6ZYB_iYmk8m_YJFZXsy1Cd3xvwKUNBzjU1Um0pLlFXBUOKnk17MZjSDbt4WPj_Skgqw5o-YVif-Ap2PEs5ESMA7FV8BK7u1VaVPV0n7VQlVNhMs4bhY"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="aspect-square bg-surface-container-high rounded-sm border-2 border-transparent hover:border-primary cursor-pointer transition-all relative overflow-hidden group">
+<img class="w-full h-full object-cover" data-alt="glowing global network data connections on a dark background technical engineering aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiuzJZ6kd0VeOYbfvUWXJvvMWD3fTwzCAb7cchyCDWF9hqum8TocGkxFdQBg9w7HwVZQxA6wDOKrdhyfV_CA2CTQD0HoHBn4CNITEEmbCqN6dxy_Bu5eO5mrHXAma3fZBqbIIT0w5ZxcpwAQY2RWLJyvZx-pxj9sWHgWqK5kPzDQi_jLPdo10afetJ5KNfAmbeiZCOHzr9xUFZVX4U5jUCXn6fbIBpcXge4bDayHDYn7q7SUlVKwpR1cESt8egxQY4xNpkkcdFZTg"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="aspect-square bg-surface-container-high rounded-sm border-2 border-transparent hover:border-primary cursor-pointer transition-all relative overflow-hidden group">
+<img class="w-full h-full object-cover" data-alt="clean geometric patterns in soft gray and blue professional architectural detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkoOZ5Nj0Y8S1clUS63xGmMBHa08iHTcVKIa_4ygp84A_hO-oIR75BwSnb7m0G1RThxN_hE8GW4x_qKjfS2c8B5VUX_FOAslgjBIX-YLpjxrnqrCXTwXiu6Qexts848WibOPupUURXMu6wt2xF0V43jO_Fg_dpv4vhSkNtaY23vscZNJDvGDeEvgNgxlKjdkipMC_rNRkT_RDOZKW8b0RXJcEse5S9YK0trvErFgSkB7RnOEViF8vGi_eCJDggHlGP5_3OGbplA9c"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="visibility">visibility</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action Bar -->
+<footer class="h-20 bg-surface-container-highest/50 backdrop-blur-sm border-t border-outline-variant/20 flex items-center justify-between px-10 z-20">
+<div class="flex items-center gap-6">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-slate-200">
+<img class="w-full h-full object-cover" data-alt="user avatar professional profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp_dJiQdXwtYXVX2monlNct8RF7BlJ6KFcdPNPG61eObPtB5Dd-rlv-iW8_ehQkHHNwJw8nQlQUaiz_06_Jv9BXYTCY486ZkQnRZSCbPjL_XBi5fycctGgQoz1Pe2hKMBs92vb1qJ5KIu6VowFSOtQpMEp6ICs5NSFbuxZFbex_9_-MxuKDL9bZJkJyZ5cZz60lC9-hxi5CXtUBz7O5-JyntdwambtX_sePYqHDnJ3u4K3FVWc7tsTjnTMW4hGNvWaZlVPS63fwVo"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center bg-primary text-[10px] text-white font-bold">+2</div>
+</div>
+<p class="text-[11px] text-on-surface-variant font-medium">当前已生成 4 张变体，已选择 1 张核心视觉资产</p>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-8 py-3 rounded-sm font-bold text-sm transition-all flex items-center gap-3 shadow-[0_4px_12px_rgba(0,46,112,0.3)]">
+                    送往发布检查 <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</footer>
+</section>
+<!-- Right Column: Parameters Panel -->
+<section class="w-80 flex flex-col bg-surface border-l border-outline-variant/10 overflow-y-auto">
+<div class="p-6 space-y-8">
+<!-- AI Suggestions -->
+<div class="space-y-4">
+<label class="text-[10px] font-bold uppercase tracking-widest text-tertiary flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="auto_awesome">auto_awesome</span> 提示词建议 (AI SUGGESTION)
+                    </label>
+<div class="bg-tertiary-fixed p-4 rounded-sm border-b-2 border-tertiary">
+<p class="text-[11px] text-on-tertiary-fixed leading-relaxed font-medium">
+                            "未来实验室风格，高科技生产流水线，极简蓝色色调，4k分辨率，微距摄影..."
+                        </p>
+<button class="mt-3 w-full py-1.5 bg-tertiary-container text-on-tertiary text-[10px] rounded-sm font-bold hover:brightness-110">应用建议</button>
+</div>
+</div>
+<!-- Manual Parameters -->
+<div class="space-y-6">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">生成参数</label>
+<!-- Aspect Ratio -->
+<div class="space-y-3">
+<span class="text-[11px] font-bold block">画面比例</span>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-2 border border-primary bg-secondary-container text-primary text-[10px] font-bold rounded-sm">1:1</button>
+<button class="py-2 border border-outline-variant text-on-surface-variant text-[10px] rounded-sm hover:bg-surface-container-low transition-colors">4:3</button>
+<button class="py-2 border border-outline-variant text-on-surface-variant text-[10px] rounded-sm hover:bg-surface-container-low transition-colors">16:9</button>
+</div>
+</div>
+<!-- Style Intensity -->
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[11px] font-bold">风格强度</span>
+<span class="text-[10px] font-mono text-primary">85%</span>
+</div>
+<div class="h-1 bg-surface-container-high rounded-full relative">
+<div class="absolute left-0 top-0 h-full bg-primary w-[85%] rounded-full"></div>
+<div class="absolute left-[85%] top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-primary rounded-full"></div>
+</div>
+</div>
+<!-- Text Overlay Toggle -->
+<div class="pt-4 border-t border-outline-variant/10 space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-bold">文字覆盖 (Text-on-Image)</span>
+<div class="w-8 h-4 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full"></div>
+</div>
+</div>
+<input class="w-full bg-surface-container-low border-0 border-b border-outline-variant focus:border-primary focus:ring-0 text-xs p-2 placeholder:text-on-surface-variant/40" placeholder="输入覆盖文字内容..." type="text"/>
+</div>
+</div>
+<!-- History Assets -->
+<div class="space-y-4 pt-4">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">历史资产</label>
+<div class="grid grid-cols-4 gap-2">
+<div class="aspect-square rounded-sm bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="microchip closeup electronic component" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNRamiXQPPKRcEFsnB3g8IWqJJspPVgDUNYN0cJVLepI-OclPxKGeNLTPcSQkAdwDPuGv9rMwaCNr-hjwBh-e-2LVF_0WNvz2e4F06dZn7ZAHVEi5U3S5Qg1j--z0xYW4AsrzPdMwPdKQuQA4AprKn__33aUJj8R4PnGu4Dzy2PAZnB3PSmM1lY1MrUsafsYGFszEJndU2yjCvRIYiXd0sj7q2PJrpF_XytiRBE3GHLISn09ifjkusWBit7vuic3sY_fYUsoyyGyo"/>
+</div>
+<div class="aspect-square rounded-sm bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="cyber security matrix code" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNFLteOSz4pUYrkjYUfeM96xz9-79wWrfxxe_Xm8SPyh02gasvpykcRFnq6bqd7_gUzApPDbIjlKGmAcFj-VV8iFKaDcG6pg7mi7mPZ1j4cdW0J_wqfKflcVe9kKvY-n3Xbn_ytpOoHlDkNt-wJa9eTHvxET6jS720ErfQKFEqWWE87sCNynyqEXOXqAUMeJGQC1MfB5tq7hFsDXIPrOm0NavVniBQX7m2MrRpcK_oS94CksEFTaZDnCQsjb1G4D2B5S3GYFMWHG8"/>
+</div>
+<div class="aspect-square rounded-sm bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="data charts on screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWnRt82Z3Vly5tfpXXxGoknkf8akp8vR-rkE4fu5iCqEEu7dI9_PiqC3TiDT2ViPuHgImOwLzNxE59hw_cd_MrB1m4Fy_WkOG4SvS2av9slsTq5XiiWN6ksMfEp2kQYmf7ZVwLKQgo8jdzTOtXpRP_C7A-Fe4kC_Dts4pHOWek1Jasyi3XJBAcN9oRPMMmEpbWwrE1QMOyhQ8hq6P_DUjODBJUJF4N8v_2p5xuajspHmmDuQmuxMVi4sxdFAf_5ippPPY6P69kaeo"/>
+</div>
+<div class="aspect-square rounded-sm bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer flex items-center justify-center border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-xs text-on-surface-variant" data-icon="add">add</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

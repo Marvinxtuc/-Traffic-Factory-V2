@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流量工厂 - 复盘台</title>
+  <style>
+    body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
+    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
+    .nav a.active { background: #1d4ed8; color: #fff; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; }
+    .primary { background: #1d4ed8; color: #fff; }
+    .disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .actions input, .actions textarea {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      width: min(620px, 100%);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
+    .status { background: #ffedd5; border-left: 4px solid #f97316; padding: 10px 12px; }
+    .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="nav">
+      <a href="/discovery">发现台</a>
+      <a href="/topics">选题池</a>
+      <a href="/contents">内容工坊</a>
+      <a href="/images">图片工坊</a>
+      <a href="/checks">发布检查</a>
+      <a class="active" href="/retros">复盘台</a>
+    </nav>
+
+    <h1>复盘台</h1>
+
+    <section class="card">
+      <h2>当前对象区</h2>
+      <p>当前对象：复盘记录（RetroRecord）</p>
+      <p>上游依赖：发布检查记录（PublishCheck）</p>
+    </section>
+
+    <section class="card">
+      <h2>详情区占位</h2>
+      <p>复盘详情占位：后续接入发布结果摘要、指标、洞察和下一步动作。</p>
+    </section>
+
+    <section class="card actions">
+      <h2>主动作按钮区</h2>
+      <p>动作：基于发布检查记录创建复盘（调用 `/api/retros`）</p>
+      <label>
+        发布检查 ID（必填）
+        <input id="publish-check-id-input" type="text" placeholder="例如：chk_xxx">
+      </label>
+      <label>
+        发布结果摘要
+        <textarea id="publish-summary-input" rows="3" placeholder="输入复盘摘要"></textarea>
+      </label>
+      <button id="retro-create-btn" class="primary disabled" type="button" disabled>创建复盘记录</button>
+      <div id="action-result" class="result-panel">等待动作执行。</div>
+    </section>
+
+    <section class="status">
+      <h2>状态提示区</h2>
+      <p>入口约束占位：复盘台默认依赖发布检查记录；拦截结果不得进入复盘，必须回退到内容工坊或图片工坊。</p>
+    </section>
+
+    <section class="empty">
+      <h2>错误/空状态占位</h2>
+      <p>未选择发布检查记录，复盘入口保持禁用。</p>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const checkIdInput = document.getElementById("publish-check-id-input");
+      const summaryInput = document.getElementById("publish-summary-input");
+      const createButton = document.getElementById("retro-create-btn");
+      const resultPanel = document.getElementById("action-result");
+
+      const query = new URLSearchParams(window.location.search);
+      if (!checkIdInput.value && query.get("publish_check_id")) {
+        checkIdInput.value = query.get("publish_check_id");
+      }
+
+      function setResult(payload) {
+        if (!payload) {
+          resultPanel.textContent = "接口无响应。";
+          return;
+        }
+        resultPanel.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      function syncDisabled() {
+        const disabled = !checkIdInput.value.trim();
+        createButton.disabled = disabled;
+        createButton.classList.toggle("disabled", disabled);
+      }
+
+      async function runAction(action, payload) {
+        const response = await fetch(`/web/actions/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        return response.json();
+      }
+
+      checkIdInput.addEventListener("input", syncDisabled);
+      syncDisabled();
+
+      createButton.addEventListener("click", async function () {
+        const response = await runAction("retro_create", {
+          publish_check_id: checkIdInput.value.trim(),
+          publish_result_summary: summaryInput.value.trim() || "来自复盘台的创建动作",
+        });
+        setResult(response);
+      });
+    })();
+  </script>
+</body>
+</html>

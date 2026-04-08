@@ -1,0 +1,46 @@
+{
+  "signal": {
+    "source_type": "manual",
+    "title": "phase1-signal"
+  },
+  "topic": {
+    "title": "phase1-topic",
+    "angle": "minimal-verification",
+    "priority": "P1",
+    "target_platform": "xiaohongshu",
+    "decision_note": "used-for-phase1-tests"
+  },
+  "content_cases": {
+    "pass": {
+      "variant_type": "post",
+      "platform": "xiaohongshu",
+      "title": "phase1 pass title",
+      "body": "This body is complete enough for the phase one publish check."
+    },
+    "warn": {
+      "variant_type": "post",
+      "platform": "xiaohongshu",
+      "title": "short",
+      "body": "This body is present, but the title should trigger a warning."
+    },
+    "block": {
+      "variant_type": "post",
+      "platform": "xiaohongshu",
+      "title": "",
+      "body": ""
+    }
+  },
+  "image_asset": {
+    "asset_type": "cover",
+    "storage_path": "tmp/test-output/cover.png",
+    "template_id": "tpl-phase1-minimal",
+    "prompt_snapshot": "phase1 minimal image prompt",
+    "width": 1080,
+    "height": 1440
+  },
+  "retro": {
+    "publish_result_summary": "phase1 publish summary",
+    "insight": "phase1 insight",
+    "next_action": "phase1 next action"
+  }
+}

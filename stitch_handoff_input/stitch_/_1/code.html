@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Discovery Station | Traffic Factory V1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eceef1",
+                        "on-secondary-fixed": "#0c1b38",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "on-surface-variant": "#434651",
+                        "background": "#f7f9fc",
+                        "secondary-fixed": "#d9e2ff",
+                        "on-primary-fixed-variant": "#124393",
+                        "on-tertiary-fixed": "#341100",
+                        "secondary-container": "#c9d7fd",
+                        "inverse-primary": "#b0c6ff",
+                        "surface-container-highest": "#e0e3e6",
+                        "primary-fixed": "#d9e2ff",
+                        "inverse-on-surface": "#eff1f4",
+                        "on-tertiary-container": "#ff9e6d",
+                        "surface-variant": "#e0e3e6",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-secondary-fixed-variant": "#394666",
+                        "on-secondary-container": "#505d7e",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#572100",
+                        "on-primary-fixed": "#001944",
+                        "surface-bright": "#f7f9fc",
+                        "secondary-fixed-dim": "#b9c6ec",
+                        "tertiary-fixed-dim": "#ffb692",
+                        "outline": "#747783",
+                        "surface": "#f7f9fc",
+                        "tertiary-container": "#7b3100",
+                        "outline-variant": "#c3c6d3",
+                        "on-background": "#191c1e",
+                        "primary-container": "#144494",
+                        "secondary": "#515e7f",
+                        "surface-container-low": "#f2f4f7",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d8dadd",
+                        "on-surface": "#191c1e",
+                        "surface-container-high": "#e6e8eb",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "on-primary-container": "#97b5ff",
+                        "on-tertiary-fixed-variant": "#793000",
+                        "on-primary": "#ffffff",
+                        "primary": "#002e70",
+                        "surface-tint": "#335bac",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="flex flex-col fixed left-0 top-0 h-full z-40 bg-white dark:bg-slate-900 h-screen w-64 border-r border-slate-200 dark:border-slate-800 font-['Inter'] text-sm font-medium">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-sm flex items-center justify-center text-white font-black text-lg">TF</div>
+<div>
+<h1 class="text-blue-700 font-black leading-none">Enterprise</h1>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">V1.0.4</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<!-- Active Tab: Discovery (Matched by Intent) -->
+<a class="flex items-center gap-3 px-3 py-2.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-l-4 border-blue-700 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span>Discovery</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span>Topic Pool</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span>Content Lab</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+<span>Image Lab</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span>Quality Gate</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>Retrospective</span>
+</a>
+</nav>
+<div class="p-3 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 font-['Inter'] antialiased w-full border-b border-slate-200 dark:border-slate-800 flex justify-between items-center h-16 px-6 sticky top-0 z-30">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Traffic Factory V1</span>
+<span class="h-4 w-[1px] bg-slate-200 mx-2"></span>
+<nav class="flex gap-6 text-sm">
+<span class="text-blue-600 dark:text-blue-400 font-semibold cursor-pointer active:opacity-80">Signal Feed</span>
+<span class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer active:opacity-80 px-2 py-1 rounded">Analytics</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border-none text-sm focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search signals..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-sm cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-sm cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-slate-200 ml-2 overflow-hidden border border-slate-300">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close-up portrait of professional male in blue shirt with confident expression in corporate office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5itRi_hMmBlfLvChNN64j5f9hFimSf_dbCoY9w3RvH3hKMWlngA2RzHwhkZyHOkn_nHMacvwdRDyV_csIHHyM2mA3_727ycSjjxtzRDj0_xKBjPucR4-4fdJgrU0YpRQkF1ga8ZKzgGs_HJE3NuvGX5v5P1JJjaF-DHIje-hR4s3pfV4pb0U61rlGCVXObLSQPwLs6Ysv4bhjs1wVabN0nhagEIuA6zjsyE1VMoa74zr6VwI4nMWQXuAuKkIQQgi5ti52Gso_wRU"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Signal List (Center) -->
+<section class="flex-1 flex flex-col bg-surface border-r border-slate-200">
+<!-- Filter Area -->
+<div class="p-4 border-b border-slate-200 flex items-center justify-between bg-white">
+<div class="flex gap-2">
+<button class="px-3 py-1.5 bg-surface-container-high text-on-surface text-xs font-semibold flex items-center gap-2 border border-slate-200 rounded-sm">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                            ALL SOURCES
+                        </button>
+<button class="px-3 py-1.5 bg-white text-on-surface-variant text-xs font-medium flex items-center gap-2 border border-slate-200 rounded-sm hover:bg-slate-50">
+                            MIN. HEAT: 70
+                        </button>
+<button class="px-3 py-1.5 bg-white text-on-surface-variant text-xs font-medium flex items-center gap-2 border border-slate-200 rounded-sm hover:bg-slate-50">
+                            TIME: 24H
+                        </button>
+</div>
+<div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+                        248 Signals Detected
+                    </div>
+</div>
+<!-- Error Banner State (Conditional Placeholder) -->
+<div class="mx-4 mt-4 p-3 bg-error-container text-on-error-container border border-error/20 flex items-center justify-between rounded-sm hidden">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+<span class="text-sm font-medium">Failed to fetch real-time signal stream. Retrying in 5s...</span>
+</div>
+<button class="text-xs font-bold uppercase tracking-wider underline">Manual Reconnect</button>
+</div>
+<!-- Scrollable List -->
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Selected List Item -->
+<div class="bg-surface-container-lowest border-l-4 border-primary shadow-sm p-4 relative cursor-pointer group transition-all">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-tight rounded-sm">TECH_RADAR</span>
+<span class="text-[11px] text-on-surface-variant font-medium">12m ago</span>
+</div>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-sm font-bold">94</span>
+</div>
+</div>
+<h3 class="text-on-surface font-semibold text-base mb-3 leading-snug">Quantum Computing Breakthrough in Silicon Photonics Architecture</h3>
+<div class="flex items-center justify-between pt-4 border-t border-slate-100">
+<div class="flex gap-2 w-full">
+<button class="flex-1 bg-primary text-white text-xs font-bold py-2 px-3 rounded-sm hover:bg-primary-container transition-colors uppercase tracking-wide">Convert to Topic</button>
+<button class="px-3 py-2 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-sm">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Regular List Item -->
+<div class="bg-surface-container-lowest border border-slate-200 p-4 relative cursor-pointer hover:border-slate-300 transition-all">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 bg-surface-container-highest text-on-surface-variant text-[10px] font-bold uppercase tracking-tight rounded-sm">SOCIAL_FEED</span>
+<span class="text-[11px] text-on-surface-variant font-medium">45m ago</span>
+</div>
+<div class="flex items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-sm" data-icon="local_fire_department">local_fire_department</span>
+<span class="text-sm font-bold">62</span>
+</div>
+</div>
+<h3 class="text-on-surface font-semibold text-base mb-3 leading-snug">Sudden Spike in "No-Code AI" Search Volume across Tier-1 Regions</h3>
+<div class="flex items-center justify-between pt-4 border-t border-slate-100">
+<div class="flex gap-2 w-full">
+<button class="flex-1 bg-primary text-white text-xs font-bold py-2 px-3 rounded-sm hover:bg-primary-container transition-colors uppercase tracking-wide">Convert to Topic</button>
+<button class="px-3 py-2 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-sm">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Loading Skeleton State -->
+<div class="bg-surface-container-lowest border border-slate-100 p-4 animate-pulse">
+<div class="flex justify-between mb-3">
+<div class="flex gap-2">
+<div class="w-16 h-4 bg-slate-100 rounded-sm"></div>
+<div class="w-12 h-4 bg-slate-50 rounded-sm"></div>
+</div>
+<div class="w-8 h-4 bg-slate-100 rounded-sm"></div>
+</div>
+<div class="w-full h-5 bg-slate-100 rounded-sm mb-2"></div>
+<div class="w-3/4 h-5 bg-slate-100 rounded-sm mb-4"></div>
+<div class="flex gap-2 border-t border-slate-50 pt-4">
+<div class="flex-1 h-8 bg-slate-100 rounded-sm"></div>
+<div class="w-10 h-8 bg-slate-50 rounded-sm"></div>
+</div>
+</div>
+<!-- Empty State Placeholder (Hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-20 px-10 text-center">
+<div class="w-24 h-24 mb-6 bg-surface-container-high rounded-full flex items-center justify-center text-slate-300">
+<span class="material-symbols-outlined text-5xl" data-icon="check_circle">check_circle</span>
+</div>
+<h4 class="text-on-surface font-bold text-lg mb-2">All signals processed</h4>
+<p class="text-on-surface-variant text-sm max-w-xs">You've cleared the discovery queue for now. Relax or adjust your filters to see more signals.</p>
+</div>
+</div>
+</section>
+<!-- Detail Drawer (Right) -->
+<aside class="w-[420px] bg-white flex flex-col shadow-[-4px_0_24px_rgba(0,0,0,0.02)] z-20">
+<div class="p-6 border-b border-slate-200 flex items-center justify-between">
+<h2 class="text-xs font-black uppercase tracking-widest text-primary">Signal Analysis</h2>
+<button class="text-slate-400 hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<!-- Featured Image -->
+<div class="w-full h-48 bg-slate-900 overflow-hidden">
+<img alt="Quantum Photonics" class="w-full h-full object-cover opacity-80" data-alt="futuristic digital visualization of light particles flowing through a complex circuit board with neon blue and purple glows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCk7KN1KiEnQNyWGMwfvs8XYY1izyh2ClbaCDXJTPPnAieh0RBx1OpcoZRbCYrdZf5wG49_43C-Tz4Veb5jUEw5n1dHt3fA8hewFqjmWepad5L88g6DXuoVguGbHnFtrCJ4Tox2PIV1x_2Zw1J8qXQD0O6-Dg-Um1kUbbx4JWuBQivINTEtEUdCxvZBT2fjH7xl0dc70YhBkHCFh7dpl7038P4tXiUgBl3nxRHftbQjqIIgxok4ULMwzrMKo0L5irOMyklvY-dctXo"/>
+</div>
+<div class="p-6 space-y-6">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="analytics">analytics</span>
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Metadata</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-3 rounded-sm">
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Source Domain</p>
+<p class="text-xs font-semibold text-on-surface">nature.com/articles</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-sm">
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Confidence</p>
+<p class="text-xs font-semibold text-on-surface">98.4% Accuracy</p>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold text-on-surface mb-3 leading-tight">Quantum Computing Breakthrough in Silicon Photonics Architecture</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+                                Researchers have successfully integrated single-photon emitters with silicon-on-insulator circuits, enabling scalable quantum processing units that operate at room temperature. This significantly lowers the barrier for industrial-grade quantum application deployments.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-container border border-slate-200 text-[10px] font-medium text-slate-600 rounded-sm">#QuantumTech</span>
+<span class="px-2 py-1 bg-surface-container border border-slate-200 text-[10px] font-medium text-slate-600 rounded-sm">#Photonics</span>
+<span class="px-2 py-1 bg-surface-container border border-slate-200 text-[10px] font-medium text-slate-600 rounded-sm">#DeepTech</span>
+</div>
+</div>
+<!-- AI Insight Box -->
+<div class="bg-tertiary/5 border-l-4 border-tertiary p-5">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="auto_awesome">auto_awesome</span>
+<h4 class="text-xs font-black uppercase tracking-widest text-tertiary">Traffic Factory AI Insight</h4>
+</div>
+<p class="text-sm font-medium text-on-surface mb-3">
+                                This signal represents a "Structural Pivot" in the Quantum Computing niche. 
+                            </p>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-tertiary mt-0.5" data-icon="trending_up">trending_up</span>
+                                    Predicted 400% increase in search intent within 48 hours.
+                                </li>
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-tertiary mt-0.5" data-icon="target">target</span>
+                                    Ideal for "Thought Leadership" content pillar.
+                                </li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Drawer Actions -->
+<div class="p-6 border-t border-slate-200 bg-white">
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-white text-xs font-black py-3 rounded-sm hover:bg-primary-container transition-colors uppercase tracking-widest">
+                            Promote to Topic
+                        </button>
+<button class="px-4 py-3 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-sm">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Contextual FAB (Restricted to Main List) -->
+<div class="fixed bottom-8 right-[444px] z-50">
+<button class="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+</div>
+</body></html>

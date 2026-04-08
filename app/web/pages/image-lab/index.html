@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流量工厂 - 图片工坊</title>
+  <style>
+    body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
+    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
+    .nav a.active { background: #1d4ed8; color: #fff; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; }
+    .primary { background: #1d4ed8; color: #fff; }
+    .disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .actions input {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      width: min(620px, 100%);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .toggle { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
+    .status { background: #ffedd5; border-left: 4px solid #f97316; padding: 10px 12px; }
+    .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="nav">
+      <a href="/discovery">发现台</a>
+      <a href="/topics">选题池</a>
+      <a href="/contents">内容工坊</a>
+      <a class="active" href="/images">图片工坊</a>
+      <a href="/checks">发布检查</a>
+      <a href="/retros">复盘台</a>
+    </nav>
+
+    <h1>图片工坊</h1>
+
+    <section class="card">
+      <h2>当前对象区</h2>
+      <p>当前对象：图片资产（ImageAsset）</p>
+      <p>上游依赖：内容版本（ContentVariant）</p>
+    </section>
+
+    <section class="card">
+      <h2>列表区/详情区占位</h2>
+      <p>图片资产列表与预览详情占位：后续接入资产生成与落库索引。</p>
+    </section>
+
+    <section class="card actions">
+      <h2>主动作按钮区</h2>
+      <p>动作：提交检查（调用 `/api/checks/submit`）</p>
+      <label>
+        内容版本 ID（必填）
+        <input id="content-id-input" type="text" placeholder="例如：cnt_xxx">
+      </label>
+      <label>
+        图片资产 ID（可选，声明带图时建议填写）
+        <input id="image-id-input" type="text" placeholder="例如：img_xxx">
+      </label>
+      <label>
+        选题 ID（可选）
+        <input id="topic-id-input" type="text" placeholder="例如：top_xxx">
+      </label>
+      <label>
+        平台（可选）
+        <input id="platform-input" type="text" value="xiaohongshu">
+      </label>
+      <label class="toggle">
+        <input id="declares-image-input" type="checkbox" checked>
+        声明送检包含图片
+      </label>
+      <button id="image-submit-check-btn" class="primary disabled" type="button" disabled>提交检查</button>
+
+      <p>动作 2：标记图片已修改（统一触发旧检查失效）</p>
+      <label>
+        修改后存储路径（可选）
+        <input id="image-storage-update-input" type="text" placeholder="可选：输入修改后的图片路径">
+      </label>
+      <button id="image-mark-modified-btn" class="primary disabled" type="button" disabled>标记图片已修改</button>
+      <div id="action-result" class="result-panel">等待动作执行。</div>
+    </section>
+
+    <section class="status">
+      <h2>状态提示区</h2>
+      <p>不可跳步占位：无内容版本不能创建图片资产；图片资产变更后旧检查结果失效，必须重新检查。</p>
+    </section>
+
+    <section class="empty">
+      <h2>错误/空状态占位</h2>
+      <p>未选择内容版本，当前页面仅展示空状态。</p>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const contentIdInput = document.getElementById("content-id-input");
+      const imageIdInput = document.getElementById("image-id-input");
+      const topicIdInput = document.getElementById("topic-id-input");
+      const platformInput = document.getElementById("platform-input");
+      const declaresImageInput = document.getElementById("declares-image-input");
+      const actionButton = document.getElementById("image-submit-check-btn");
+      const imageStorageUpdateInput = document.getElementById("image-storage-update-input");
+      const markModifiedButton = document.getElementById("image-mark-modified-btn");
+      const resultPanel = document.getElementById("action-result");
+
+      const query = new URLSearchParams(window.location.search);
+      if (!contentIdInput.value && query.get("content_variant_id")) {
+        contentIdInput.value = query.get("content_variant_id");
+      }
+      if (!imageIdInput.value && query.get("image_asset_id")) {
+        imageIdInput.value = query.get("image_asset_id");
+      }
+
+      function setResult(payload) {
+        if (!payload) {
+          resultPanel.textContent = "接口无响应。";
+          return;
+        }
+        resultPanel.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      function syncDisabled() {
+        const noContent = !contentIdInput.value.trim();
+        const noImage = !imageIdInput.value.trim();
+        actionButton.disabled = noContent;
+        actionButton.classList.toggle("disabled", noContent);
+        markModifiedButton.disabled = noImage;
+        markModifiedButton.classList.toggle("disabled", noImage);
+      }
+
+      async function runAction(action, payload) {
+        const response = await fetch(`/web/actions/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        return response.json();
+      }
+
+      contentIdInput.addEventListener("input", syncDisabled);
+      syncDisabled();
+
+      actionButton.addEventListener("click", async function () {
+        const response = await runAction("image_submit_check", {
+          content_variant_id: contentIdInput.value.trim(),
+          image_asset_id: imageIdInput.value.trim() || null,
+          topic_id: topicIdInput.value.trim() || null,
+          platform: platformInput.value.trim() || null,
+          declares_image: declaresImageInput.checked,
+        });
+        setResult(response);
+        if (response.ok) {
+          const checkId = response.data.check.id;
+          window.location.href = `/checks?check_id=${encodeURIComponent(checkId)}&content_variant_id=${encodeURIComponent(contentIdInput.value.trim())}`;
+        }
+      });
+
+      markModifiedButton.addEventListener("click", async function () {
+        const response = await runAction("image_mark_modified", {
+          image_asset_id: imageIdInput.value.trim(),
+          storage_path: imageStorageUpdateInput.value.trim() || null,
+        });
+        setResult(response);
+        if (response.ok) {
+          const contentVariantId = response.data.image_asset.content_variant_id;
+          window.location.href = `/checks?content_variant_id=${encodeURIComponent(contentVariantId)}&image_asset_id=${encodeURIComponent(imageIdInput.value.trim())}&need_recheck=1`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
