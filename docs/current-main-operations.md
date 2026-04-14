@@ -66,10 +66,12 @@ bash scripts/restart_current_main.sh
 .venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8790
 ```
 
-如果想把 env 配置校验、全量测试与 smoke 合并为一次自动检查，可执行：
+如果想把 env 配置校验、工作树干净检查、端口监听确认、启动日志核对、全量测试与 smoke 合并为一次自动检查，可执行：
 
 ```bash
-.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790
+mkdir -p logs
+TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash scripts/restart_current_main.sh > logs/current-main.log 2>&1 &
+.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log
 ```
 
 必须同时满足：

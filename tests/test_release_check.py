@@ -62,15 +62,19 @@ class TestReleaseCheck(unittest.TestCase):
                 "checks": [{"path": "/healthz", "ok": True, "status": 200}],
             }
 
-            with mock.patch.object(release_check, "run_command", return_value={"ok": True, "exit_code": 0, "stdout": "OK", "stderr": ""}) as run_command_mock, \
+            with mock.patch.object(release_check, "run_command", return_value={"ok": True, "exit_code": 0, "stdout": "", "stderr": ""}) as run_command_mock, \
+                 mock.patch.object(release_check, "is_port_listening", return_value=True), \
                  mock.patch.object(release_check.smoke_test, "run_checks", return_value=smoke_result):
                 result = release_check.run_release_check(env_path=env_path, base_url="http://127.0.0.1:8790")
 
         self.assertTrue(result["ok"])
-        self.assertEqual([item["name"] for item in result["checks"]], ["env_file", "test_suite", "smoke"])
+        self.assertEqual(
+            [item["name"] for item in result["checks"]],
+            ["env_file", "git_status", "test_suite", "port_listening", "smoke"],
+        )
         self.assertTrue(all(item["ok"] for item in result["checks"]))
-        run_command_mock.assert_called_once()
-        self.assertIn("unittest discover", run_command_mock.call_args.kwargs["command"])
+        self.assertEqual(run_command_mock.call_count, 2)
+        self.assertEqual(run_command_mock.call_args.kwargs["command"], release_check.TEST_COMMAND)
 
     def test_run_release_check_fails_when_required_env_key_is_missing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -119,10 +123,127 @@ class TestReleaseCheck(unittest.TestCase):
         self.assertEqual(failed[0]["name"], "env_file")
         self.assertIn("base_url", failed[0]["error"])
 
+    def test_run_release_check_reports_failure_when_git_status_is_dirty(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path = Path(tmpdir) / "staging.env"
+            log_path = Path(tmpdir) / "current-main.log"
+            env_path.write_text(
+                "\n".join(
+                    [
+                        "TF_HOST=127.0.0.1",
+                        "TF_PORT=8790",
+                        "TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3",
+                        "TF_LOG_LEVEL=INFO",
+                        "TF_ACCESS_LOG=false",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            log_path.write_text(
+                '{"event": "server_starting", "host": "127.0.0.1", "port": 8790, "db_path": "data/runtime/traffic_factory_staging.sqlite3", "log_level": "INFO", "access_log": false}\n',
+                encoding="utf-8",
+            )
+
+            with mock.patch.object(release_check, "run_command") as run_command_mock, \
+                 mock.patch.object(release_check, "is_port_listening", return_value=True), \
+                 mock.patch.object(release_check.smoke_test, "run_checks", return_value={"ok": True, "checks": []}):
+                run_command_mock.side_effect = [
+                    {"ok": False, "exit_code": 1, "stdout": " M README.md\n", "stderr": ""},
+                    {"ok": True, "exit_code": 0, "stdout": "OK", "stderr": ""},
+                ]
+                result = release_check.run_release_check(
+                    env_path=env_path,
+                    base_url="http://127.0.0.1:8790",
+                    startup_log_path=log_path,
+                )
+
+        self.assertFalse(result["ok"])
+        failed = [item for item in result["checks"] if not item["ok"]]
+        self.assertEqual(failed[0]["name"], "git_status")
+        self.assertIn("README.md", failed[0]["stdout"])
+
+    def test_run_release_check_reports_failure_when_target_port_is_not_listening(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path = Path(tmpdir) / "staging.env"
+            log_path = Path(tmpdir) / "current-main.log"
+            env_path.write_text(
+                "\n".join(
+                    [
+                        "TF_HOST=127.0.0.1",
+                        "TF_PORT=8790",
+                        "TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3",
+                        "TF_LOG_LEVEL=INFO",
+                        "TF_ACCESS_LOG=false",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            log_path.write_text(
+                '{"event": "server_starting", "host": "127.0.0.1", "port": 8790, "db_path": "data/runtime/traffic_factory_staging.sqlite3", "log_level": "INFO", "access_log": false}\n',
+                encoding="utf-8",
+            )
+
+            with mock.patch.object(release_check, "run_command") as run_command_mock, \
+                 mock.patch.object(release_check, "is_port_listening", return_value=False), \
+                 mock.patch.object(release_check.smoke_test, "run_checks", return_value={"ok": True, "checks": []}):
+                run_command_mock.side_effect = [
+                    {"ok": True, "exit_code": 0, "stdout": "", "stderr": ""},
+                    {"ok": True, "exit_code": 0, "stdout": "OK", "stderr": ""},
+                ]
+                result = release_check.run_release_check(
+                    env_path=env_path,
+                    base_url="http://127.0.0.1:8790",
+                    startup_log_path=log_path,
+                )
+
+        self.assertFalse(result["ok"])
+        failed = [item for item in result["checks"] if not item["ok"]]
+        self.assertEqual(failed[0]["name"], "port_listening")
+        self.assertIn("127.0.0.1:8790", failed[0]["error"])
+
+    def test_run_release_check_reports_failure_when_startup_log_mismatches_env(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path = Path(tmpdir) / "staging.env"
+            log_path = Path(tmpdir) / "current-main.log"
+            env_path.write_text(
+                "\n".join(
+                    [
+                        "TF_HOST=127.0.0.1",
+                        "TF_PORT=8790",
+                        "TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3",
+                        "TF_LOG_LEVEL=INFO",
+                        "TF_ACCESS_LOG=false",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            log_path.write_text(
+                '{"event": "server_starting", "host": "127.0.0.1", "port": 8790, "db_path": "data/runtime/other.sqlite3", "log_level": "INFO", "access_log": false}\n',
+                encoding="utf-8",
+            )
+
+            with mock.patch.object(release_check, "run_command") as run_command_mock, \
+                 mock.patch.object(release_check, "is_port_listening", return_value=True), \
+                 mock.patch.object(release_check.smoke_test, "run_checks", return_value={"ok": True, "checks": []}):
+                run_command_mock.side_effect = [
+                    {"ok": True, "exit_code": 0, "stdout": "", "stderr": ""},
+                    {"ok": True, "exit_code": 0, "stdout": "OK", "stderr": ""},
+                ]
+                result = release_check.run_release_check(
+                    env_path=env_path,
+                    base_url="http://127.0.0.1:8790",
+                    startup_log_path=log_path,
+                )
+
+        self.assertFalse(result["ok"])
+        failed = [item for item in result["checks"] if not item["ok"]]
+        self.assertEqual(failed[0]["name"], "startup_log")
+        self.assertIn("db_path", failed[0]["error"])
+
     def test_main_prints_json_and_uses_exit_code(self) -> None:
         payload = {"ok": True, "checks": []}
         with mock.patch.object(release_check, "run_release_check", return_value=payload), \
-             mock.patch("sys.argv", ["release_check.py", "--env-file", "deploy/staging.env.example", "--base-url", "http://127.0.0.1:8790"]), \
+             mock.patch("sys.argv", ["release_check.py", "--env-file", "deploy/staging.env.example", "--base-url", "http://127.0.0.1:8790", "--startup-log", "logs/current-main.log"]), \
              mock.patch("builtins.print") as print_mock:
             with self.assertRaises(SystemExit) as ctx:
                 release_check.main()

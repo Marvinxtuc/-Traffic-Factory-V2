@@ -22,11 +22,16 @@
 或直接运行自动化检查脚本：
 
 ```bash
-.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790
+mkdir -p logs
+TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash scripts/restart_current_main.sh > logs/current-main.log 2>&1 &
+.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log
 ```
 
 成功标准：
 - 退出码为 0
+- 工作树干净
+- 目标端口处于监听状态
+- 启动日志中存在匹配当前配置的 `server_starting` JSON 事件
 - 不允许跳过已知关键测试
 
 ### B. 配置确认
