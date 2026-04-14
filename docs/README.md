@@ -8,6 +8,9 @@
 2. `phase1-implementation-plan.md`：一期实施计划与任务卡顺序。
 3. `repo-boundaries.md`：仓库边界、运行边界与目录职责。
 4. `context-pack-v2.md`：线程接续与上下文压缩应对参考材料。
+5. `current-main-operations.md`：当前主线运行、验活、排障与最小回滚手册。
+6. `release-checklist.md`：当前主线发布前/后检查单。
+7. `current-main-known-limits.md`：当前版本已知限制与口径边界。
 
 文档口径要求：
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -33,6 +32,8 @@ class _FakeResponse:
 class TestCurrentMainSmokeTest(unittest.TestCase):
     def test_run_checks_reports_all_core_endpoints_healthy(self) -> None:
         payloads = {
+            "http://127.0.0.1:8791/healthz": _FakeResponse({"ok": True}),
+            "http://127.0.0.1:8791/readyz": _FakeResponse({"ok": True, "checks": {"db": "ok"}}),
             "http://127.0.0.1:8791/discovery": _FakeResponse({"html": True}),
             "http://127.0.0.1:8791/api/signals": _FakeResponse({"ok": True, "items": []}),
             "http://127.0.0.1:8791/api/topics": _FakeResponse({"ok": True, "items": []}),
@@ -49,6 +50,8 @@ class TestCurrentMainSmokeTest(unittest.TestCase):
 
         self.assertTrue(result["ok"])
         self.assertEqual([item["path"] for item in result["checks"]], [
+            "/healthz",
+            "/readyz",
             "/discovery",
             "/api/signals",
             "/api/topics",
@@ -57,6 +60,8 @@ class TestCurrentMainSmokeTest(unittest.TestCase):
 
     def test_run_checks_marks_failure_when_api_returns_not_ok(self) -> None:
         payloads = {
+            "http://127.0.0.1:8791/healthz": _FakeResponse({"ok": True}),
+            "http://127.0.0.1:8791/readyz": _FakeResponse({"ok": False, "checks": {"db": "error"}}),
             "http://127.0.0.1:8791/discovery": _FakeResponse({"html": True}),
             "http://127.0.0.1:8791/api/signals": _FakeResponse({"ok": False, "items": []}),
             "http://127.0.0.1:8791/api/topics": _FakeResponse({"ok": True, "items": []}),
@@ -71,8 +76,8 @@ class TestCurrentMainSmokeTest(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         failed = [item for item in result["checks"] if not item["ok"]]
-        self.assertEqual(len(failed), 1)
-        self.assertEqual(failed[0]["path"], "/api/signals")
+        self.assertEqual(len(failed), 2)
+        self.assertEqual([item["path"] for item in failed], ["/readyz", "/api/signals"])
 
 
 if __name__ == "__main__":

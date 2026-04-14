@@ -7,6 +7,8 @@ from urllib import request
 
 
 CHECKS = (
+    {"path": "/healthz", "kind": "json_ok"},
+    {"path": "/readyz", "kind": "json_ok"},
     {"path": "/discovery", "kind": "page"},
     {"path": "/api/signals", "kind": "json_ok"},
     {"path": "/api/topics", "kind": "json_ok"},
