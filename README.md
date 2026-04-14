@@ -46,12 +46,62 @@
 ## 常用命令
 
 ```bash
+# 显式使用 Python 3.11+（不要直接依赖系统 python3，macOS 上常见为 3.9）
+.venv/bin/python --version
+
 # 初始化数据库（默认 data/runtime/traffic_factory.sqlite3）
-python3 scripts/init_db.py
+.venv/bin/python scripts/init_db.py
 
 # 运行全量测试
-python3 -m unittest discover -s tests -p "test_*.py"
+.venv/bin/python -m unittest discover -s tests -p "test_*.py"
 
-# 启动本地服务
-python3 -m app.main --host 127.0.0.1 --port 8787 --db-path data/runtime/traffic_factory.sqlite3
+# 直接启动当前主线
+.venv/bin/python -m app.main --host 127.0.0.1 --port 8787 --db-path data/runtime/traffic_factory.sqlite3
 ```
+
+## 当前主线可复用重启方案
+
+当前主线入口固定为 `app.main`，仓库 `pyproject.toml` 已声明 `requires-python = ">=3.11"`。
+
+优先使用：
+
+```bash
+bash scripts/restart_current_main.sh
+```
+
+脚本行为：
+
+1. 优先选择已激活虚拟环境、其次 `.venv/bin/python`、再次 `python3.11`。
+2. 启动前强校验 Python 版本，低于 3.11 直接失败，避免再次误用 3.9。
+3. 启动前校验 `TF_PORT` 是否为合法端口，并预检查 `TF_HOST:TF_PORT` 是否已被占用；若端口冲突，会优先输出监听进程信息与改端口建议。
+4. 自动创建数据库目录、执行 `scripts/init_db.py`，然后以同一解释器启动 `app.main`。
+5. 支持环境变量覆写：`TF_PYTHON`、`TF_HOST`、`TF_PORT`、`TF_DB_PATH`。
+
+例如：
+
+```bash
+TF_PORT=8788 TF_DB_PATH=data/runtime/traffic_factory.sqlite3 bash scripts/restart_current_main.sh
+```
+
+## 当前主线验活
+
+当前主线启动后，优先使用最小 smoke 脚本做验活：
+
+```bash
+.venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8787
+```
+
+若当前实例运行在 8791：
+
+```bash
+.venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8791
+```
+
+成功标准：
+
+1. `/discovery` 返回 200
+2. `/api/signals` 返回 200，且 JSON 中 `ok=true`
+3. `/api/topics` 返回 200，且 JSON 中 `ok=true`
+4. 脚本退出码为 0
+
+如果 smoke 脚本失败，再去检查端口占用、数据库路径和实例日志，不要先入为主地强杀已有健康实例。

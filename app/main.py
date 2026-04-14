@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import json
+import shutil
+import subprocess
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -28,6 +31,45 @@ def _http_status_from_error(code: str | None) -> HTTPStatus:
     if code in {"GATE_BLOCKED", "CONSTRAINT_VIOLATION"}:
         return HTTPStatus.CONFLICT
     return HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def _list_listening_processes(port: int) -> list[str]:
+    if shutil.which("lsof") is None:
+        return []
+
+    try:
+        completed = subprocess.run(
+            ["lsof", "-nP", f"-iTCP:{port}", "-sTCP:LISTEN"],
+            capture_output=True,
+            check=False,
+            text=True,
+        )
+    except OSError:
+        return []
+
+    lines = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    if len(lines) <= 1:
+        return []
+    return lines[1:]
+
+
+def _format_server_bind_error(host: str, port: int, exc: OSError) -> str:
+    if exc.errno == errno.EADDRINUSE:
+        details = [f"无法启动 app.main：{host}:{port} 已被占用。"]
+        listeners = _list_listening_processes(port)
+        if listeners:
+            details.append("当前占用该端口的监听进程：")
+            details.extend(f"- {line}" for line in listeners[:5])
+        details.append("请先停止占用进程，或改用 --port / TF_PORT 指定其他端口后重试。")
+        return "\n".join(details)
+
+    if exc.errno == errno.EACCES:
+        return f"无法启动 app.main：没有权限绑定 {host}:{port}。请改用更高位端口或检查系统权限。"
+
+    if exc.errno == errno.EADDRNOTAVAIL:
+        return f"无法启动 app.main：本机不存在可绑定地址 {host}。请检查 --host / TF_HOST 设置。"
+
+    return f"无法启动 app.main：绑定 {host}:{port} 失败（{exc}）。"
 
 
 class TrafficFactoryRequestHandler(BaseHTTPRequestHandler):
@@ -126,7 +168,10 @@ def _build_handler(*, db_path: str | Path | None = None) -> type[TrafficFactoryR
 
 
 def run_server(*, host: str = "127.0.0.1", port: int = 8787, db_path: str | Path | None = None) -> None:
-    server = ThreadingHTTPServer((host, port), _build_handler(db_path=db_path))
+    try:
+        server = ThreadingHTTPServer((host, port), _build_handler(db_path=db_path))
+    except OSError as exc:
+        raise SystemExit(_format_server_bind_error(host, port, exc)) from exc
     print(f"Traffic Factory app running at http://{host}:{port}")
     print("Use /discovery /topics /contents /images /checks /retros for web pages.")
     print("Use /api/* and /web/actions/* for minimal API/Web action calls.")
