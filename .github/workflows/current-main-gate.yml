@@ -33,7 +33,8 @@ jobs:
             "uvicorn>=0.30.0" \
             "requests>=2.32.0" \
             "beautifulsoup4>=4.12.0" \
-            "feedparser>=6.0.11"
+            "feedparser>=6.0.11" \
+            "httpx>=0.27.0"
 
       - name: Run unittest suite
         run: python -m unittest discover -s tests -p 'test_*.py'
@@ -59,7 +60,8 @@ jobs:
             "uvicorn>=0.30.0" \
             "requests>=2.32.0" \
             "beautifulsoup4>=4.12.0" \
-            "feedparser>=6.0.11"
+            "feedparser>=6.0.11" \
+            "httpx>=0.27.0"
 
       - name: Start current-main instance
         run: |
