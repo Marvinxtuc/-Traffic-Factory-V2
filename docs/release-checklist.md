@@ -19,6 +19,12 @@
 .venv/bin/python -m unittest discover -s tests -p "test_*.py"
 ```
 
+或直接运行自动化检查脚本：
+
+```bash
+.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790
+```
+
 成功标准：
 - 退出码为 0
 - 不允许跳过已知关键测试

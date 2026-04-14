@@ -66,6 +66,12 @@ bash scripts/restart_current_main.sh
 .venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8790
 ```
 
+如果想把 env 配置校验、全量测试与 smoke 合并为一次自动检查，可执行：
+
+```bash
+.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790
+```
+
 必须同时满足：
 
 1. `/healthz` 返回 200 且 `ok=true`

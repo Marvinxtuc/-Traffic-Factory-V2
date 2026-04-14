@@ -121,6 +121,9 @@ TF_PORT=8788 TF_LOG_LEVEL=DEBUG TF_ACCESS_LOG=true bash scripts/restart_current_
 
 发布前检查单见：`docs/release-checklist.md`
 
+自动化发布检查脚本：
+- `.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790`
+
 当前版本边界与已知限制见：`docs/current-main-known-limits.md`
 
 环境模板见：
