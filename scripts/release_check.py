@@ -5,6 +5,7 @@ import importlib.util
 import json
 import socket
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -18,7 +19,7 @@ REQUIRED_ENV_KEYS = (
     "TF_LOG_LEVEL",
     "TF_ACCESS_LOG",
 )
-TEST_COMMAND = ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'"
+TEST_DISCOVER_ARGS = "-m unittest discover -s tests -p 'test_*.py'"
 GIT_STATUS_COMMAND = "git status --short"
 
 _SMOKE_PATH = Path(__file__).resolve().parent / "current_main_smoke_test.py"
@@ -48,6 +49,13 @@ def run_command(*, command: str, workdir: str | Path) -> dict[str, Any]:
         "stdout": completed.stdout,
         "stderr": completed.stderr,
     }
+
+
+def get_test_command() -> str:
+    venv_python = REPO_ROOT / ".venv" / "bin" / "python"
+    if venv_python.exists():
+        return f'"{venv_python}" {TEST_DISCOVER_ARGS}'
+    return f'"{sys.executable}" {TEST_DISCOVER_ARGS}'
 
 
 def _check_env_file(env_path: str | Path, *, base_url: str) -> dict[str, Any]:
@@ -86,7 +94,7 @@ def _check_git_status() -> dict[str, Any]:
 
 
 def _check_test_suite() -> dict[str, Any]:
-    result = run_command(command=TEST_COMMAND, workdir=REPO_ROOT)
+    result = run_command(command=get_test_command(), workdir=REPO_ROOT)
     return {"name": "test_suite", **result}
 
 

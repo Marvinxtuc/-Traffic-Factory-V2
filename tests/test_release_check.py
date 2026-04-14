@@ -74,7 +74,13 @@ class TestReleaseCheck(unittest.TestCase):
         )
         self.assertTrue(all(item["ok"] for item in result["checks"]))
         self.assertEqual(run_command_mock.call_count, 2)
-        self.assertEqual(run_command_mock.call_args.kwargs["command"], release_check.TEST_COMMAND)
+        self.assertEqual(run_command_mock.call_args.kwargs["command"], release_check.get_test_command())
+
+    def test_get_test_command_falls_back_to_current_python_when_venv_python_is_missing(self) -> None:
+        with mock.patch.object(release_check, "REPO_ROOT", Path("/tmp/nonexistent-release-check-root")):
+            command = release_check.get_test_command()
+
+        self.assertEqual(command, f'"{release_check.sys.executable}" -m unittest discover -s tests -p \'test_*.py\'')
 
     def test_run_release_check_fails_when_required_env_key_is_missing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
