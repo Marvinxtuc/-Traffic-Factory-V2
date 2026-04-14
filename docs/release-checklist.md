@@ -33,6 +33,7 @@ TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash script
 - 目标端口处于监听状态
 - 启动日志中存在匹配当前配置的 `server_starting` JSON 事件
 - 不允许跳过已知关键测试
+- 若使用 GitHub 仓库流程，`.github/workflows/current-main-gate.yml` 中的对应门禁也应为通过状态
 
 ### B. 配置确认
 

@@ -39,13 +39,23 @@
 
 所以它已经能帮助排查“服务怎么起的”，但还不等于完整可观测性。
 
-### 2.4 release checklist 仍是人工执行
+### 2.4 已有最小自动化 release gate，但还不是完整流水线
 
-现在已有 `docs/release-checklist.md`，但它还是人工检查单，不是自动化发布流水线。
+现在不仅有 `docs/release-checklist.md`，还已有 `scripts/release_check.py` 作为最小自动化发布检查入口。
+
+当前自动化已覆盖：
+- env 文件结构与目标实例 `base_url` 对齐校验
+- git working tree clean 校验
+- 全量 unittest
+- 目标端口监听校验
+- `server_starting` 启动日志校验
+- smoke 验活
 
 含义：
-- 可以支持当前阶段上线收口
-- 但仍依赖发布人按单执行，不等于 CI/CD 已完成
+- 当前版本已经不是“纯人工 checklist”阶段
+- 可以支持当前阶段的发布收口与 staging / prod 演练
+- 但仍依赖发布人显式触发脚本，不等于 CI/CD 已完成
+- 也还没有形成完整的自动部署流水线
 
 ### 2.5 配置模板是示例，不是密钥仓库
 
