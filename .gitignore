@@ -27,7 +27,8 @@ runtime/*
 
 reports/*
 !reports/.gitkeep
-!reports/phase1-current-run.md
+!reports/v2_*.md
+!reports/README.md
 
 artifacts/*
 !artifacts/.gitkeep
