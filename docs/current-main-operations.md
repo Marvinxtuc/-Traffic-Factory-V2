@@ -66,12 +66,31 @@ bash scripts/restart_current_main.sh
 .venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8790
 ```
 
+推荐执行顺序（发布前）：
+
+1. 先跑本地自检：`.venv/bin/python -m unittest discover -s tests -p "test_*.py"`
+2. 再确认工作区为 clean：`git status --porcelain` 必须无输出
+3. 启动待检实例并落启动日志
+4. 最后执行 `scripts/release_check.py`
+
+说明：
+- `release_check.py` 默认是 `strict` 模式；发布和 CI 必须使用 strict，不可放宽。
+- 若因工作区不干净导致失败，属于**预期失败**，不是脚本异常。
+- 仅本地调试可用 `--allow-dirty`，且必须提供 `--allow-dirty-reason`。
+- `--allow-dirty` 只豁免 `git_status`，其余检查仍按 strict 执行。
+
 如果想把 env 配置校验、工作树干净检查、端口监听确认、启动日志核对、全量测试与 smoke 合并为一次自动检查，可执行：
 
 ```bash
 mkdir -p logs
 TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash scripts/restart_current_main.sh > logs/current-main.log 2>&1 &
 .venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log
+```
+
+本地调试放宽示例（非发布流程）：
+
+```bash
+.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log --allow-dirty --allow-dirty-reason "local debug: temporary dirty tree"
 ```
 
 必须同时满足：
@@ -82,6 +101,21 @@ TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash script
 4. `/api/signals` 返回 200 且 `ok=true`
 5. `/api/topics` 返回 200 且 `ok=true`
 6. smoke 退出码为 0
+
+如果 `release_check.py` 因以下原因失败，判定口径如下：
+
+- 分类码为 `GIT_DIRTY_BLOCKED`：**预期失败（阻断发布）**
+- 分类码为 `TEST_SUITE_FAILED`、`PORT_NOT_LISTENING`、`STARTUP_LOG_INVALID`、`SMOKE_FAILED`：**异常失败（需排障）**
+
+失败分类码与处理动作：
+
+| 分类码 | 场景 | 处理动作 |
+|---|---|---|
+| `GIT_DIRTY_BLOCKED` | strict 模式 + 工作区 non-clean | 清理工作区后重跑 |
+| `TEST_SUITE_FAILED` | unittest 未通过 | 修复测试后重跑 |
+| `PORT_NOT_LISTENING` | 目标端口未监听 | 检查进程/端口冲突后重跑 |
+| `STARTUP_LOG_INVALID` | 启动日志缺失或参数不匹配 | 修正日志路径/启动参数后重跑 |
+| `SMOKE_FAILED` | smoke 任一检查失败 | 按 smoke 输出定位并修复后重跑 |
 
 ## 6. 常见失败与处理
 
@@ -114,6 +148,17 @@ TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash script
 - 检查 `TF_DB_PATH`
 - 检查数据库目录是否可写
 - 手动运行 `scripts/init_db.py --db-path <path>` 复核初始化是否正常
+
+### 6.4 release_check 因工作区 non-clean 失败
+
+现象：
+- `scripts/release_check.py` 返回非 0
+- 输出包含工作区不干净（tracked 修改、未跟踪文件等）
+
+处理：
+- 这是发布门禁的预期行为，不是脚本故障
+- 先整理工作区（提交、暂存或清理本次不发布内容）后再重跑
+- 在未 clean 前，不应继续推进发布动作
 
 ## 7. 最小回滚
 

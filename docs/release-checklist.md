@@ -10,14 +10,30 @@
 
 ## 3. 发布前检查
 
+推荐执行顺序（必须遵守）：
+1. 本地自检（unittest）
+2. 工作区 clean 校验（`git status --porcelain`）
+3. 启动待发布实例并保留启动日志
+4. 执行 `scripts/release_check.py`
+5. 仅在 release_check 通过后继续发布
+
+门禁模式口径：
+- 默认 `strict`，发布/CI 一律使用 strict。
+- `debug_allow_dirty` 仅允许本地调试，且必须显式传入 `--allow-dirty --allow-dirty-reason`。
+- 放宽仅豁免 `git_status`，不豁免测试、端口、启动日志和 smoke。
+
 ### A. 代码与测试
 
-1. 确认工作树干净，避免把临时文件一起带进发布。
-2. 运行全量测试：
+1. 运行全量测试：
 
 ```bash
 .venv/bin/python -m unittest discover -s tests -p "test_*.py"
 ```
+
+2. 确认工作树干净，避免把临时文件一起带进发布。
+   - 执行：`git status --porcelain`
+   - 判定：无输出才算 clean
+   - 约束：non-clean 必须阻断，不能跳过
 
 或直接运行自动化检查脚本：
 
@@ -34,6 +50,21 @@ TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash script
 - 启动日志中存在匹配当前配置的 `server_starting` JSON 事件
 - 不允许跳过已知关键测试
 - 若使用 GitHub 仓库流程，`.github/workflows/current-main-gate.yml` 中的对应门禁也应为通过状态
+
+失败判定口径：
+- 分类码 `GIT_DIRTY_BLOCKED`：**预期失败**（门禁生效）
+- 分类码 `TEST_SUITE_FAILED`、`PORT_NOT_LISTENING`、`STARTUP_LOG_INVALID`、`SMOKE_FAILED`：**异常失败**（需排障）
+- 未先完成 clean 校验直接执行发布：**流程违规**
+
+失败分类码 -> 处理动作：
+
+| 分类码 | 处理动作 |
+|---|---|
+| `GIT_DIRTY_BLOCKED` | 清理工作区后重跑 release_check |
+| `TEST_SUITE_FAILED` | 修复测试失败后重跑 |
+| `PORT_NOT_LISTENING` | 检查实例监听和端口冲突后重跑 |
+| `STARTUP_LOG_INVALID` | 修复启动日志路径/参数匹配后重跑 |
+| `SMOKE_FAILED` | 按 smoke 输出定位接口问题后重跑 |
 
 ### B. 配置确认
 
@@ -102,6 +133,7 @@ TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash script
 
 出现以下任一项，本次发布直接判定为不通过：
 - 全量测试失败
+- 工作区 non-clean（包括 tracked 改动或未跟踪文件）
 - smoke 任一核心端点失败
 - 端口/数据库配置与目标环境不一致
 - 无法说明回滚路径

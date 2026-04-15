@@ -6,17 +6,31 @@
   <title>流量工厂 - 发现台</title>
   <style>
     body { font-family: "Noto Sans SC", "PingFang SC", sans-serif; margin: 0; background: #f4f7fb; color: #1e293b; }
-    .layout { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .layout { max-width: 1280px; margin: 0 auto; padding: 20px; }
     .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .nav a { text-decoration: none; padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: #0f172a; font-size: 14px; }
     .nav a.active { background: #1d4ed8; color: #fff; }
     .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-    .actions button { margin-right: 8px; padding: 8px 12px; border: 0; border-radius: 6px; background: #1d4ed8; color: #fff; }
-    .actions button.disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
-    .actions input { display: block; margin: 8px 0; padding: 8px 10px; width: min(560px, 100%); border: 1px solid #cbd5e1; border-radius: 6px; }
-    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
-    .status { background: #dbeafe; border-left: 4px solid #1d4ed8; padding: 10px 12px; }
+    .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .toolbar select, .toolbar input { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 180px; }
+    .toolbar button, .actions button { padding: 8px 12px; border: 0; border-radius: 6px; background: #1d4ed8; color: #fff; cursor: pointer; }
+    .toolbar button.secondary, .actions button.secondary { background: #64748b; }
+    .table-wrap { overflow: auto; border: 1px solid #cbd5e1; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; min-width: 960px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; text-align: left; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: #f8fafc; }
+    tbody tr.selected { background: #e0e7ff; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .tag { display: inline-block; background: #e2e8f0; color: #0f172a; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    .hint { color: #475569; font-size: 13px; }
+    .muted { color: #64748b; }
     .empty { background: #f8fafc; border: 1px dashed #94a3b8; padding: 10px 12px; color: #475569; }
+    .actions label { display: block; margin: 8px 0; }
+    .actions input { display: block; margin-top: 6px; padding: 8px 10px; width: min(680px, 100%); border: 1px solid #cbd5e1; border-radius: 6px; }
+    .actions button.disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+    .status { background: #dbeafe; border-left: 4px solid #1d4ed8; padding: 10px 12px; }
+    .result-panel { margin-top: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; padding: 8px 10px; color: #1e3a8a; white-space: pre-wrap; }
   </style>
 </head>
 <body>
@@ -33,19 +47,51 @@
     <h1>发现台</h1>
 
     <section class="card">
-      <h2>当前对象区</h2>
-      <p>当前对象：信号（Signal）</p>
-      <p>上游依赖：无（主链起点）</p>
+      <h2>信息源筛选</h2>
+      <div class="toolbar">
+        <label>
+          <span class="muted">来源类型</span><br>
+          <select id="filter-source-type">
+            <option value="">全部类型</option>
+            <option value="manual">手动录入</option>
+            <option value="rss">RSS</option>
+            <option value="web">网页</option>
+          </select>
+        </label>
+        <label>
+          <span class="muted">来源关键词</span><br>
+          <input id="filter-source-name" type="text" placeholder="匹配 source_ref 或 source_url">
+        </label>
+        <button id="apply-filter" type="button">应用筛选</button>
+        <button id="reset-filter" class="secondary" type="button">重置</button>
+        <span id="signals-total" class="hint"></span>
+      </div>
     </section>
 
     <section class="card">
-      <h2>列表区占位</h2>
-      <p>信号列表占位：后续接入查询接口后展示已落库信号。</p>
+      <h2>信号列表</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>信号ID</th>
+              <th>标题</th>
+              <th>来源类型</th>
+              <th>来源标识</th>
+              <th>来源链接</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody id="signals-body"></tbody>
+        </table>
+      </div>
+      <div id="signals-empty" class="empty" style="display:none; margin-top: 10px;">暂无匹配信号，请调整筛选条件。</div>
+      <p class="hint">点击列表行可自动填充“信号ID”和“选题标题”。</p>
     </section>
 
     <section class="card actions">
       <h2>主动作按钮区</h2>
-      <p>动作：发现台转入选题（调用 `/api/signals/{signal_id}/advance-to-topic`）</p>
+      <p>动作：发现台转入选题（调用 <span class="mono">/api/signals/{signal_id}/advance-to-topic</span>）</p>
       <label>
         信号 ID（必填）
         <input id="signal-id-input" type="text" placeholder="例如：sig_xxx">
@@ -62,14 +108,17 @@
       <h2>状态提示区</h2>
       <p>入口约束：只有已落库信号，才能进入选题池创建选题。</p>
     </section>
-
-    <section class="empty">
-      <h2>错误/空状态占位</h2>
-      <p>暂无信号数据。请先创建或导入信号。</p>
-    </section>
   </div>
+
   <script>
     (function () {
+      const sourceTypeInput = document.getElementById("filter-source-type");
+      const sourceNameInput = document.getElementById("filter-source-name");
+      const applyFilterButton = document.getElementById("apply-filter");
+      const resetFilterButton = document.getElementById("reset-filter");
+      const signalsBody = document.getElementById("signals-body");
+      const signalsEmpty = document.getElementById("signals-empty");
+      const signalsTotal = document.getElementById("signals-total");
       const signalIdInput = document.getElementById("signal-id-input");
       const topicTitleInput = document.getElementById("topic-title-input");
       const actionButton = document.getElementById("discovery-to-topic-btn");
@@ -78,6 +127,30 @@
       const query = new URLSearchParams(window.location.search);
       if (!signalIdInput.value && query.get("signal_id")) {
         signalIdInput.value = query.get("signal_id");
+      }
+
+      let selectedSignalId = "";
+      let loadedSignals = [];
+
+      const sourceTypeLabel = {
+        manual: "手动录入",
+        rss: "RSS",
+        web: "网页",
+      };
+      const statusLabel = {
+        NEW: "新建",
+        READY_FOR_TOPIC: "待转选题",
+        CONVERTED: "已转选题",
+        DISCARDED: "已丢弃",
+      };
+
+      function safeText(value) {
+        return String(value == null ? "" : value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
       }
 
       function setResult(payload) {
@@ -94,6 +167,15 @@
         actionButton.classList.toggle("disabled", disabled);
       }
 
+      async function callApi(url, options) {
+        const response = await fetch(url, options || {});
+        const payload = await response.json();
+        if (!response.ok || !payload.ok) {
+          throw payload;
+        }
+        return payload;
+      }
+
       async function runAction(action, payload) {
         const response = await fetch(`/web/actions/${action}`, {
           method: "POST",
@@ -102,6 +184,85 @@
         });
         return response.json();
       }
+
+      function renderSignals(items) {
+        loadedSignals = items;
+        signalsBody.innerHTML = "";
+        signalsTotal.textContent = `匹配 ${items.length} 条`;
+
+        if (!items.length) {
+          signalsEmpty.style.display = "block";
+          return;
+        }
+        signalsEmpty.style.display = "none";
+
+        items.forEach(function (item) {
+          const row = document.createElement("tr");
+          row.dataset.signalId = item.id;
+          if (item.id === selectedSignalId) {
+            row.classList.add("selected");
+          }
+          row.innerHTML = `
+            <td class="mono">${safeText(item.id)}</td>
+            <td>${safeText(item.title || "")}</td>
+            <td><span class="tag">${safeText(sourceTypeLabel[item.source_type] || item.source_type || "")}</span></td>
+            <td>${safeText(item.source_ref || "-")}</td>
+            <td>${item.source_url ? `<a href="${safeText(item.source_url)}" target="_blank" rel="noreferrer">${safeText(item.source_url)}</a>` : "-"}</td>
+            <td>${safeText(statusLabel[item.status] || item.status || "")}</td>
+          `;
+
+          row.addEventListener("click", function () {
+            selectedSignalId = item.id;
+            signalIdInput.value = item.id || "";
+            if (!topicTitleInput.value.trim()) {
+              topicTitleInput.value = item.title || "";
+            }
+            syncDisabled();
+            renderSignals(loadedSignals);
+          });
+
+          signalsBody.appendChild(row);
+        });
+      }
+
+      async function loadSignals() {
+        signalsBody.innerHTML = "";
+        signalsEmpty.style.display = "none";
+        signalsTotal.textContent = "加载中...";
+
+        const params = new URLSearchParams();
+        if (sourceTypeInput.value.trim()) {
+          params.set("source_type", sourceTypeInput.value.trim());
+        }
+        if (sourceNameInput.value.trim()) {
+          params.set("source_name", sourceNameInput.value.trim());
+        }
+
+        try {
+          const queryString = params.toString();
+          const payload = await callApi(`/api/signals${queryString ? `?${queryString}` : ""}`);
+          const items = (payload.data && Array.isArray(payload.data.items)) ? payload.data.items : [];
+          renderSignals(items);
+        } catch (error) {
+          signalsTotal.textContent = "加载失败";
+          signalsEmpty.style.display = "block";
+          signalsEmpty.textContent = (error && error.error && error.error.message) ? error.error.message : "读取信号失败";
+        }
+      }
+
+      sourceNameInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          loadSignals();
+        }
+      });
+      applyFilterButton.addEventListener("click", loadSignals);
+      resetFilterButton.addEventListener("click", function () {
+        sourceTypeInput.value = "";
+        sourceNameInput.value = "";
+        selectedSignalId = "";
+        loadSignals();
+      });
 
       signalIdInput.addEventListener("input", syncDisabled);
       topicTitleInput.addEventListener("input", syncDisabled);
@@ -118,6 +279,8 @@
           window.location.href = `/topics?topic_id=${encodeURIComponent(topicId)}&signal_id=${encodeURIComponent(signalIdInput.value.trim())}`;
         }
       });
+
+      loadSignals();
     })();
   </script>
 </body>

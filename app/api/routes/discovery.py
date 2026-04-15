@@ -35,6 +35,13 @@ class SignalRouteSet:
             if source_type:
                 where["source_type"] = source_type
             items = self.repository.list(Signal, where=where or None, order_by="created_at DESC")
+            source_name = str(query.get("source_name") or "").strip().lower()
+            if source_name:
+                items = [
+                    item for item in items
+                    if source_name in str(item.source_ref or "").lower()
+                    or source_name in str(item.source_url or "").lower()
+                ]
             return success_response(
                 {
                     "items": models_to_items(items),

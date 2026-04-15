@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 import json
 import tempfile
 import unittest
@@ -16,6 +17,29 @@ SPEC.loader.exec_module(release_check)
 
 
 class TestReleaseCheck(unittest.TestCase):
+    def _write_valid_env_and_log(self, tmpdir: str) -> tuple[Path, Path]:
+        env_path = Path(tmpdir) / "staging.env"
+        log_path = Path(tmpdir) / "current-main.log"
+        env_path.write_text(
+            "\n".join(
+                [
+                    "TF_HOST=127.0.0.1",
+                    "TF_PORT=8790",
+                    "TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3",
+                    "TF_LOG_LEVEL=INFO",
+                    "TF_ACCESS_LOG=false",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        log_path.write_text(
+            '{"event": "server_starting", "host": "127.0.0.1", "port": 8790, '
+            '"db_path": "data/runtime/traffic_factory_staging.sqlite3", '
+            '"log_level": "INFO", "access_log": false}\n',
+            encoding="utf-8",
+        )
+        return env_path, log_path
+
     def test_load_env_file_parses_required_release_keys(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             env_path = Path(tmpdir) / "staging.env"
@@ -257,6 +281,89 @@ class TestReleaseCheck(unittest.TestCase):
         self.assertEqual(ctx.exception.code, 0)
         printed = print_mock.call_args.args[0]
         self.assertEqual(json.loads(printed), payload)
+
+    def test_run_release_check_dirty_strict_is_blocked_with_failure_code(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path, log_path = self._write_valid_env_and_log(tmpdir)
+            with mock.patch.object(release_check, "run_command", return_value={"ok": True, "exit_code": 0, "stdout": " M README.md\n", "stderr": ""}), \
+                 mock.patch.object(release_check, "is_port_listening", return_value=True), \
+                 mock.patch.object(release_check.smoke_test, "run_checks", return_value={"ok": True, "checks": []}):
+                result = release_check.run_release_check(
+                    env_path=env_path,
+                    base_url="http://127.0.0.1:8790",
+                    startup_log_path=log_path,
+                    run_tests=False,
+                    allow_dirty=False,
+                )
+
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["gate_mode"], "strict")
+        failed = next(item for item in result["checks"] if item["name"] == "git_status")
+        self.assertFalse(failed["ok"])
+        self.assertEqual(failed["failure_code"], "GIT_DIRTY_BLOCKED")
+
+    def test_run_release_check_dirty_with_allow_dirty_reason_adds_waiver_and_continues(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path, log_path = self._write_valid_env_and_log(tmpdir)
+            with mock.patch.object(release_check, "run_command", return_value={"ok": True, "exit_code": 0, "stdout": " M README.md\n", "stderr": ""}), \
+                 mock.patch.object(release_check, "is_port_listening", return_value=True), \
+                 mock.patch.object(release_check.smoke_test, "run_checks", return_value={"ok": True, "checks": []}):
+                result = release_check.run_release_check(
+                    env_path=env_path,
+                    base_url="http://127.0.0.1:8790",
+                    startup_log_path=log_path,
+                    run_tests=False,
+                    allow_dirty=True,
+                    allow_dirty_reason="本地联调临时放宽",
+                )
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["gate_mode"], "debug_allow_dirty")
+        self.assertTrue(result["waivers"])
+        self.assertEqual(result["waivers"][0]["check"], "git_status")
+        self.assertEqual(result["waivers"][0]["reason"], "本地联调临时放宽")
+
+    def test_main_exits_non_zero_when_allow_dirty_reason_missing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path, log_path = self._write_valid_env_and_log(tmpdir)
+            argv = [
+                "release_check.py",
+                "--env-file",
+                str(env_path),
+                "--base-url",
+                "http://127.0.0.1:8790",
+                "--startup-log",
+                str(log_path),
+                "--skip-tests",
+                "--allow-dirty",
+            ]
+            stderr = io.StringIO()
+            with mock.patch("sys.argv", argv), \
+                 mock.patch("sys.stderr", stderr), \
+                 mock.patch("builtins.print"):
+                with self.assertRaises(SystemExit) as ctx:
+                    release_check.main()
+
+        self.assertNotEqual(ctx.exception.code, 0)
+        self.assertIn("--allow-dirty-reason", stderr.getvalue())
+
+    def test_run_release_check_clean_strict_remains_compatible(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_path, log_path = self._write_valid_env_and_log(tmpdir)
+            with mock.patch.object(release_check, "run_command", return_value={"ok": True, "exit_code": 0, "stdout": "", "stderr": ""}), \
+                 mock.patch.object(release_check, "is_port_listening", return_value=True), \
+                 mock.patch.object(release_check.smoke_test, "run_checks", return_value={"ok": True, "checks": []}):
+                result = release_check.run_release_check(
+                    env_path=env_path,
+                    base_url="http://127.0.0.1:8790",
+                    startup_log_path=log_path,
+                    run_tests=False,
+                    allow_dirty=False,
+                )
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["gate_mode"], "strict")
+        self.assertEqual(result["waivers"], [])
 
 
 if __name__ == "__main__":

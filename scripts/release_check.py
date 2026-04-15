@@ -62,11 +62,16 @@ def _check_env_file(env_path: str | Path, *, base_url: str) -> dict[str, Any]:
     try:
         payload = load_env_file(env_path)
     except Exception as exc:
-        return {"name": "env_file", "ok": False, "error": str(exc)}
+        return {"name": "env_file", "ok": False, "error": str(exc), "failure_code": "ENV_FILE_READ_FAILED"}
 
     missing = [key for key in REQUIRED_ENV_KEYS if key not in payload]
     if missing:
-        return {"name": "env_file", "ok": False, "error": f"missing required keys: {', '.join(missing)}"}
+        return {
+            "name": "env_file",
+            "ok": False,
+            "error": f"missing required keys: {', '.join(missing)}",
+            "failure_code": "ENV_FILE_MISSING_KEYS",
+        }
     parsed = urlparse(base_url)
     expected_host = parsed.hostname or ""
     expected_port = parsed.port or (443 if parsed.scheme == "https" else 80)
@@ -78,24 +83,62 @@ def _check_env_file(env_path: str | Path, *, base_url: str) -> dict[str, Any]:
                 "env file does not match base_url: "
                 f"TF_HOST={payload['TF_HOST']} TF_PORT={payload['TF_PORT']} vs {base_url}"
             ),
+            "failure_code": "ENV_FILE_BASE_URL_MISMATCH",
         }
-    return {"name": "env_file", "ok": True, "env": payload}
+    return {"name": "env_file", "ok": True, "env": payload, "failure_code": None}
 
 
-def _check_git_status() -> dict[str, Any]:
+def _check_git_status(*, allow_dirty: bool, allow_dirty_reason: str | None) -> dict[str, Any]:
     result = run_command(command=GIT_STATUS_COMMAND, workdir=REPO_ROOT)
-    is_clean = result["ok"] and not result["stdout"].strip()
+    if not result["ok"]:
+        return {
+            "name": "git_status",
+            **result,
+            "ok": False,
+            "error": "failed to execute git status check",
+            "failure_code": "GIT_STATUS_COMMAND_FAILED",
+            "waived": False,
+        }
+
+    is_clean = not result["stdout"].strip()
+    if is_clean:
+        return {
+            "name": "git_status",
+            **result,
+            "ok": True,
+            "error": None,
+            "failure_code": None,
+            "waived": False,
+        }
+
+    if allow_dirty:
+        return {
+            "name": "git_status",
+            **result,
+            "ok": True,
+            "error": "git working tree is not clean (waived for debug run)",
+            "failure_code": None,
+            "waived": True,
+            "waiver_reason": allow_dirty_reason,
+        }
+
     return {
         "name": "git_status",
         **result,
-        "ok": is_clean,
-        "error": None if is_clean else "git working tree is not clean",
+        "ok": False,
+        "error": "git working tree is not clean",
+        "failure_code": "GIT_DIRTY_BLOCKED",
+        "waived": False,
     }
 
 
 def _check_test_suite() -> dict[str, Any]:
     result = run_command(command=get_test_command(), workdir=REPO_ROOT)
-    return {"name": "test_suite", **result}
+    return {
+        "name": "test_suite",
+        **result,
+        "failure_code": None if result["ok"] else "TEST_SUITE_FAILED",
+    }
 
 
 def _parse_base_url(base_url: str) -> tuple[str, int]:
@@ -122,6 +165,7 @@ def _check_port_listening(base_url: str) -> dict[str, Any]:
         "host": host,
         "port": port,
         "error": None if is_listening else f"target port is not listening: {host}:{port}",
+        "failure_code": None if is_listening else "PORT_NOT_LISTENING",
     }
 
 
@@ -159,12 +203,19 @@ def _check_startup_log(startup_log_path: str | Path, *, env_payload: dict[str, s
             "ok": False,
             "log_path": str(startup_log_path),
             "error": "env payload does not match base_url for startup log validation",
+            "failure_code": "STARTUP_LOG_INVALID",
         }
 
     try:
         event = _load_startup_event(startup_log_path)
     except Exception as exc:
-        return {"name": "startup_log", "ok": False, "log_path": str(startup_log_path), "error": str(exc)}
+        return {
+            "name": "startup_log",
+            "ok": False,
+            "log_path": str(startup_log_path),
+            "error": str(exc),
+            "failure_code": "STARTUP_LOG_INVALID",
+        }
 
     mismatches = []
     for key, expected_value in expected.items():
@@ -177,23 +228,36 @@ def _check_startup_log(startup_log_path: str | Path, *, env_payload: dict[str, s
         "log_path": str(startup_log_path),
         "event": event,
         "error": None if not mismatches else "; ".join(mismatches),
+        "failure_code": None if not mismatches else "STARTUP_LOG_INVALID",
     }
 
 
 def _check_smoke(base_url: str) -> dict[str, Any]:
     result = smoke_test.run_checks(base_url)
-    return {"name": "smoke", **result}
+    return {"name": "smoke", **result, "failure_code": None if result["ok"] else "SMOKE_FAILED"}
 
 
 def run_release_check(
-    *, env_path: str | Path, base_url: str, startup_log_path: str | Path | None = None, run_tests: bool = True
+    *,
+    env_path: str | Path,
+    base_url: str,
+    startup_log_path: str | Path | None = None,
+    run_tests: bool = True,
+    allow_dirty: bool = False,
+    allow_dirty_reason: str | None = None,
 ) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
+    waivers: list[dict[str, Any]] = []
+    gate_mode = "debug_allow_dirty" if allow_dirty else "strict"
+
     env_check = _check_env_file(env_path, base_url=base_url)
     checks.append(env_check)
 
     if env_check["ok"]:
-        checks.append(_check_git_status())
+        git_status = _check_git_status(allow_dirty=allow_dirty, allow_dirty_reason=allow_dirty_reason)
+        checks.append(git_status)
+        if git_status.get("waived"):
+            waivers.append({"check": "git_status", "reason": allow_dirty_reason or ""})
         if run_tests:
             checks.append(_check_test_suite())
         port_check = _check_port_listening(base_url)
@@ -208,6 +272,8 @@ def run_release_check(
         "env_path": str(env_path),
         "base_url": base_url,
         "startup_log_path": None if startup_log_path is None else str(startup_log_path),
+        "gate_mode": gate_mode,
+        "waivers": waivers,
         "checks": checks,
         "known_limits": "docs/current-main-known-limits.md",
         "rollback_guide": "docs/current-main-operations.md",
@@ -220,12 +286,27 @@ def main() -> None:
     parser.add_argument("--base-url", required=True, help="Base URL of the running current-main instance")
     parser.add_argument("--startup-log", required=True, help="Path to startup log file containing server_starting JSON")
     parser.add_argument("--skip-tests", action="store_true", help="Skip the full unittest suite")
+    parser.add_argument("--allow-dirty", action="store_true", help="Allow dirty git status for local debug runs only")
+    parser.add_argument(
+        "--allow-dirty-reason",
+        default=None,
+        help="Required when --allow-dirty is set. Documents why dirty workspace is allowed.",
+    )
     args = parser.parse_args()
+
+    reason = (args.allow_dirty_reason or "").strip()
+    if args.allow_dirty and not reason:
+        parser.error("--allow-dirty requires --allow-dirty-reason")
+    if not args.allow_dirty and reason:
+        parser.error("--allow-dirty-reason is only valid when --allow-dirty is set")
+
     result = run_release_check(
         env_path=args.env_file,
         base_url=args.base_url,
         startup_log_path=args.startup_log,
         run_tests=not args.skip_tests,
+        allow_dirty=args.allow_dirty,
+        allow_dirty_reason=reason or None,
     )
     print(json.dumps(result, ensure_ascii=False))
     raise SystemExit(0 if result["ok"] else 1)

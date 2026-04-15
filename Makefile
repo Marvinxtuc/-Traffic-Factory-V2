@@ -1,14 +1,27 @@
-.PHONY: v1-check-ui-language v1-runtime-smoke v1-preflight
+.PHONY: current-main-run current-main-smoke current-main-test current-main-preflight v2-release-rehearsal v2-release-rehearsal-debug
 
 PYTHON := python3
 ifneq (,$(wildcard .venv/bin/python))
 PYTHON := ./.venv/bin/python
 endif
 
-v1-check-ui-language:
-	$(PYTHON) scripts/check_ui_language.py
+current-main-run:
+	bash scripts/restart_current_main.sh
 
-v1-runtime-smoke:
-	$(PYTHON) scripts/runtime_smoke_test.py --base-url http://127.0.0.1:8788 --cleanup
+current-main-smoke:
+	$(PYTHON) scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8787
 
-v1-preflight: v1-check-ui-language v1-runtime-smoke
+current-main-test:
+	$(PYTHON) -m unittest discover -s tests -p 'test_*.py'
+
+current-main-preflight: current-main-test current-main-smoke
+
+v2-release-rehearsal:
+	bash scripts/release_rehearsal.sh
+
+v2-release-rehearsal-debug:
+	@if [ -z "$(ALLOW_DIRTY_REASON)" ]; then \
+		echo "缺少 ALLOW_DIRTY_REASON。示例: make v2-release-rehearsal-debug ALLOW_DIRTY_REASON='本地联调临时放宽'"; \
+		exit 2; \
+	fi
+	bash scripts/release_rehearsal.sh --allow-dirty-reason "$(ALLOW_DIRTY_REASON)"

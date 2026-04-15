@@ -233,3 +233,38 @@ class TestMinimalApiIntegration(IsolatedTestCase):
         self.assertTrue(image_modified["ok"])
         self.assertTrue(image_modified["data"]["requires_recheck"])
         self.assertEqual(image_modified["data"]["invalidated_checks"], 1)
+
+    def test_signal_list_supports_source_name_keyword_filter(self):
+        created_alpha = self.api.handle(
+            method="POST",
+            path="/signals",
+            payload={
+                "source_type": "manual",
+                "title": "alpha-signal",
+                "source_ref": "wechat-trend",
+                "source_url": "https://a.example.com/wechat",
+            },
+        )
+        self.assertTrue(created_alpha["ok"])
+
+        created_beta = self.api.handle(
+            method="POST",
+            path="/signals",
+            payload={
+                "source_type": "manual",
+                "title": "beta-signal",
+                "source_ref": "reddit-hot",
+                "source_url": "https://b.example.com/reddit",
+            },
+        )
+        self.assertTrue(created_beta["ok"])
+
+        filtered = self.api.handle(
+            method="GET",
+            path="/signals",
+            query={"source_name": "wechat"},
+        )
+        self.assertTrue(filtered["ok"])
+        items = filtered["data"]["items"]
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "alpha-signal")

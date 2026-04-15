@@ -62,6 +62,15 @@
 .venv/bin/python -m app.main --host 127.0.0.1 --port 8787 --db-path data/runtime/traffic_factory.sqlite3 --log-level INFO --no-access-log
 ```
 
+统一 Make 入口：
+
+```bash
+make current-main-run
+make current-main-smoke
+make current-main-test
+make current-main-preflight
+```
+
 ## 当前主线可复用重启方案
 
 当前主线入口固定为 `app.main`，仓库 `pyproject.toml` 已声明 `requires-python = ">=3.11"`。
@@ -124,6 +133,26 @@ TF_PORT=8788 TF_LOG_LEVEL=DEBUG TF_ACCESS_LOG=true bash scripts/restart_current_
 自动化发布检查脚本：
 - `mkdir -p logs && TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash scripts/restart_current_main.sh > logs/current-main.log 2>&1 &`
 - `.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log`
+
+发布门禁口径（固定）：
+- 执行 `scripts/release_check.py` 前，`git status --porcelain` 必须为空。
+- 默认 `strict` 模式，发布与 CI 场景禁止放宽。
+- non-clean 工作区被阻断属于预期行为，不是脚本异常。
+
+本地调试放宽（仅本地可用）：
+- 仅在本地调试时可显式使用 `--allow-dirty`，并且必须携带 `--allow-dirty-reason`。
+- 示例：`.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log --allow-dirty --allow-dirty-reason "local debug: verify smoke only"`
+- `--allow-dirty` 只豁免 `git_status`，不会豁免测试、端口、启动日志和 smoke。
+
+失败分类码与处理动作（最小口径）：
+
+| 分类码 | 含义 | 处理动作 |
+|---|---|---|
+| `GIT_DIRTY_BLOCKED` | strict 模式下工作区 non-clean | 先清理工作区（提交/暂存/移除临时文件）后重跑 |
+| `TEST_SUITE_FAILED` | unittest 失败 | 先修复测试失败项，禁止继续发布 |
+| `PORT_NOT_LISTENING` | 目标端口未监听 | 检查实例是否启动、端口是否冲突，再重跑 |
+| `STARTUP_LOG_INVALID` | 启动日志缺失或字段不匹配 | 修复启动参数或日志路径后重跑 |
+| `SMOKE_FAILED` | smoke 检查失败 | 按 smoke 输出定位接口/依赖问题，修复后重跑 |
 
 最小 CI / pre-release gate：
 - `.github/workflows/current-main-gate.yml`

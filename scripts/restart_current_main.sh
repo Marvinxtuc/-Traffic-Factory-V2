@@ -59,7 +59,7 @@ ensure_port_available() {
   local host="$1"
   local port="$2"
   local status
-  if ! status="$($PYTHON_BIN - "$host" "$port" <<'PY'
+  if ! status="$("$PYTHON_BIN" - "$host" "$port" <<'PY'
 import socket
 import sys
 
