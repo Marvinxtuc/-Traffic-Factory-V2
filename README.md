@@ -1,137 +1,275 @@
-# 流量工厂 v2
+# Traffic Factory v2
 
-## 当前状态
+Traffic Factory v2 is a local-first content operations system that turns raw
+signals into publishable content packages through a strict, auditable workflow.
+The project is designed around explicit domain boundaries, SQLite-backed
+records, deterministic checks, and small service modules that can be tested
+without a production deployment.
 
-本仓已完成一期主线（002-009）与条件修正卡（C01、C02），当前处于收尾清理阶段，目标是达到“一期可交付整理完成”。
+## Current Status
 
-一期固定主链路：
+The phase-one delivery line is complete and is now in cleanup and release
+hardening. The current target is a deliverable baseline where the core workflow,
+runtime entrypoint, smoke checks, release checks, and rollback documentation are
+all reviewable.
 
-`信号 -> 选题 -> 内容版本 -> 图片资产 -> 发布检查记录 -> 复盘记录`
+The fixed phase-one workflow is:
 
-对应模型：
+```text
+Signal -> Topic -> Content Variant -> Image Asset -> Publish Check -> Retro Record
+```
 
-`Signal -> Topic -> ContentVariant -> ImageAsset -> PublishCheck -> RetroRecord`
+The matching domain model is:
 
-## 一期固定约束
+```text
+Signal -> Topic -> ContentVariant -> ImageAsset -> PublishCheck -> RetroRecord
+```
 
-1. 不允许无信号创建选题。
-2. 不允许无选题创建内容版本。
-3. 不允许无内容版本创建图片资产。
-4. 不允许无发布检查记录创建复盘记录。
-5. 不允许跳步。
-6. 所有主链对象必须落库。
-7. 发布检查是强闸门，不是提示层。
-8. 修改内容版本或图片资产后，旧检查记录失效，必须新增发布检查记录，不能覆盖旧记录。
+## Architecture
 
-发布检查状态固定为：`通过 / 警告 / 拦截`。
+```mermaid
+flowchart TD
+    User["Operator / Reviewer"] --> Web["Web App Shell<br/>app/web/pages"]
+    Web --> API["HTTP API<br/>app/api"]
+    API --> Routes["Route Sets<br/>signals, topics, contents, images, checks, retros"]
+    Routes --> Services["Application Services<br/>services/"]
+    Services --> Domain["Domain Models and Rules<br/>domain/"]
+    Services --> Workflow["Workflow Orchestration<br/>workflows/"]
+    Domain --> SQLite["SQLite Runtime Store<br/>data/runtime"]
+    Workflow --> SQLite
 
-## 当前工程落点
+    Services --> Capability["Capability Bridge<br/>services/capability_bridge_service.py"]
+    Capability --> Skills["Skills Runtime<br/>skills/"]
+    Skills --> Providers["Provider Adapters<br/>adapters/providers/"]
 
-- `app/api/`：最小接口入口与路由（6 个核心模块）。
-- `app/web/pages/`：6 个页面骨架与最小动作联动入口。
-- `app/web/action_bridge.py`：页面动作到接口的桥接层。
-- `domain/`：领域对象、规则与 SQLite 仓储。
-- `services/`：主链服务、发布检查服务、能力桥接服务。
-- `workflows/`：主链工作流编排。
-- `skills/` 与 `adapters/providers/`：技能能力层最小骨架与 provider 占位。
-- `tests/`：一期最小测试边界、主链验证、发布检查专项、页面联动验证。
+    Scripts["Operational Scripts<br/>scripts/"] --> API
+    Scripts --> SQLite
+    CI["GitHub Actions<br/>.github/workflows"] --> Tests["Unit + Integration Tests<br/>tests/"]
+    Tests --> Services
+    Tests --> API
+```
 
-## 事实源
+## Core Invariants
+
+1. A topic cannot be created without a signal.
+2. A content variant cannot be created without a topic.
+3. An image asset cannot be created without a content variant.
+4. A retro record cannot be created without a publish check.
+5. The main workflow cannot skip steps.
+6. Every main-chain object must be persisted.
+7. Publish checks are hard gates, not advisory hints.
+8. When a content variant or image asset changes, the old publish check is
+   invalidated and a new publish check must be created.
+
+Publish check results are fixed to:
+
+```text
+PASS / WARN / BLOCK
+```
+
+## Repository Map
+
+- `app/api/`: minimal API entrypoint and route sets.
+- `app/web/pages/`: web page shells and browser-facing workflow actions.
+- `app/web/action_bridge.py`: bridge from page actions to API calls.
+- `domain/`: domain objects, invariants, status rules, and persistence-facing
+  contracts.
+- `services/`: application services for the main chain, checks, and capability
+  orchestration.
+- `workflows/`: main-chain workflow orchestration.
+- `skills/` and `adapters/providers/`: minimal skill runtime and provider
+  adapter skeletons.
+- `scripts/`: database initialization, restart, smoke, and release-check tools.
+- `tests/`: unit and integration coverage for the workflow, API, runtime, and
+  release gates.
+- `docs/`: source-of-truth documentation for boundaries, operations, release
+  checks, and known limits.
+- `stitch/`: design input assets only; it is not the runtime web directory.
+
+## Source Of Truth
+
+Start with these documents when reviewing scope or behavior:
 
 1. `docs/phase1-minimal-system-definition.md`
 2. `docs/phase1-implementation-plan.md`
 3. `docs/repo-boundaries.md`
-4. `stitch/`（仅设计输入资产，不作为运行页面目录）
+4. `docs/current-main-operations.md`
+5. `docs/release-checklist.md`
+6. `docs/current-main-known-limits.md`
 
-## 常用命令
+## Requirements
+
+The project requires Python 3.11 or newer. The preferred local interpreter is
+the repository virtual environment:
 
 ```bash
-# 显式使用 Python 3.11+（不要直接依赖系统 python3，macOS 上常见为 3.9）
 .venv/bin/python --version
-
-# 初始化数据库（默认 data/runtime/traffic_factory.sqlite3）
-.venv/bin/python scripts/init_db.py
-
-# 运行全量测试
-.venv/bin/python -m unittest discover -s tests -p "test_*.py"
-
-# 直接启动当前主线
-.venv/bin/python -m app.main --host 127.0.0.1 --port 8787 --db-path data/runtime/traffic_factory.sqlite3
-
-# 显式指定日志口径启动
-.venv/bin/python -m app.main --host 127.0.0.1 --port 8787 --db-path data/runtime/traffic_factory.sqlite3 --log-level INFO --no-access-log
 ```
 
-## 当前主线可复用重启方案
+Avoid relying on the system `python3` on macOS, where it may point to Python
+3.9.
 
-当前主线入口固定为 `app.main`，仓库 `pyproject.toml` 已声明 `requires-python = ">=3.11"`。
+## Common Commands
 
-优先使用：
+Initialize the default SQLite database:
+
+```bash
+.venv/bin/python scripts/init_db.py
+```
+
+Run the full test suite:
+
+```bash
+.venv/bin/python -m unittest discover -s tests -p "test_*.py"
+```
+
+Start the current main runtime directly:
+
+```bash
+.venv/bin/python -m app.main \
+  --host 127.0.0.1 \
+  --port 8787 \
+  --db-path data/runtime/traffic_factory.sqlite3
+```
+
+Start with explicit logging:
+
+```bash
+.venv/bin/python -m app.main \
+  --host 127.0.0.1 \
+  --port 8787 \
+  --db-path data/runtime/traffic_factory.sqlite3 \
+  --log-level INFO \
+  --no-access-log
+```
+
+## Restart Runbook
+
+Use the restart script for the current main runtime:
 
 ```bash
 bash scripts/restart_current_main.sh
 ```
 
-脚本行为：
+The script:
 
-1. 优先选择已激活虚拟环境、其次 `.venv/bin/python`、再次 `python3.11`。
-2. 启动前强校验 Python 版本，低于 3.11 直接失败，避免再次误用 3.9。
-3. 启动前校验 `TF_PORT` 是否为合法端口，并预检查 `TF_HOST:TF_PORT` 是否已被占用；若端口冲突，会优先输出监听进程信息与改端口建议。
-4. 自动创建数据库目录、执行 `scripts/init_db.py`，然后以同一解释器启动 `app.main`。
-5. 支持环境变量覆写：`TF_PYTHON`、`TF_HOST`、`TF_PORT`、`TF_DB_PATH`、`TF_LOG_LEVEL`、`TF_ACCESS_LOG`。
+1. Selects the active virtual environment, then `.venv/bin/python`, then
+   `python3.11`.
+2. Fails fast if the interpreter is older than Python 3.11.
+3. Validates `TF_PORT` and checks whether `TF_HOST:TF_PORT` is already in use.
+4. Creates the database directory, runs `scripts/init_db.py`, and starts
+   `app.main` with the same interpreter.
+5. Supports `TF_PYTHON`, `TF_HOST`, `TF_PORT`, `TF_DB_PATH`, `TF_LOG_LEVEL`,
+   and `TF_ACCESS_LOG`.
 
-例如：
-
-```bash
-TF_PORT=8788 TF_DB_PATH=data/runtime/traffic_factory.sqlite3 bash scripts/restart_current_main.sh
-```
-
-如果要显式打开 access log：
+Example:
 
 ```bash
-TF_PORT=8788 TF_LOG_LEVEL=DEBUG TF_ACCESS_LOG=true bash scripts/restart_current_main.sh
+TF_PORT=8788 \
+TF_DB_PATH=data/runtime/traffic_factory.sqlite3 \
+bash scripts/restart_current_main.sh
 ```
 
-## 当前主线验活
-
-当前主线启动后，优先使用最小 smoke 脚本做验活：
+Enable access logs explicitly:
 
 ```bash
-.venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8787
+TF_PORT=8788 \
+TF_LOG_LEVEL=DEBUG \
+TF_ACCESS_LOG=true \
+bash scripts/restart_current_main.sh
 ```
 
-若当前实例运行在 8791：
+## Health Checks
+
+After startup, run the smoke test:
 
 ```bash
-.venv/bin/python scripts/current_main_smoke_test.py --base-url http://127.0.0.1:8791
+.venv/bin/python scripts/current_main_smoke_test.py \
+  --base-url http://127.0.0.1:8787
 ```
 
-成功标准：
+If the current instance runs on port `8791`:
 
-1. `/healthz` 返回 200，且 JSON 中 `ok=true`
-2. `/readyz` 返回 200，且 JSON 中 `ok=true`
-3. `/discovery` 返回 200
-4. `/api/signals` 返回 200，且 JSON 中 `ok=true`
-5. `/api/topics` 返回 200，且 JSON 中 `ok=true`
-6. 脚本退出码为 0
+```bash
+.venv/bin/python scripts/current_main_smoke_test.py \
+  --base-url http://127.0.0.1:8791
+```
 
-如果 smoke 脚本失败，再去检查端口占用、数据库路径和实例日志，不要先入为主地强杀已有健康实例。
+Success criteria:
 
-更完整的运行/回滚口径见：`docs/current-main-operations.md`
+1. `/healthz` returns HTTP 200 and `ok=true`.
+2. `/readyz` returns HTTP 200 and `ok=true`.
+3. `/discovery` returns HTTP 200.
+4. `/api/signals` returns HTTP 200 and `ok=true`.
+5. `/api/topics` returns HTTP 200 and `ok=true`.
+6. The script exits with code 0.
 
-发布前检查单见：`docs/release-checklist.md`
+If the smoke test fails, inspect port usage, database paths, and runtime logs
+before stopping a healthy existing instance.
 
-自动化发布检查脚本：
-- `mkdir -p logs && TF_PORT=8790 TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 bash scripts/restart_current_main.sh > logs/current-main.log 2>&1 &`
-- `.venv/bin/python scripts/release_check.py --env-file deploy/staging.env.example --base-url http://127.0.0.1:8790 --startup-log logs/current-main.log`
+## Release Gates
 
-最小 CI / pre-release gate：
+Automated release rehearsal:
+
+```bash
+mkdir -p logs
+TF_PORT=8790 \
+TF_DB_PATH=data/runtime/traffic_factory_staging.sqlite3 \
+bash scripts/restart_current_main.sh > logs/current-main.log 2>&1 &
+```
+
+```bash
+.venv/bin/python scripts/release_check.py \
+  --env-file deploy/staging.env.example \
+  --base-url http://127.0.0.1:8790 \
+  --startup-log logs/current-main.log
+```
+
+Minimal CI and pre-release gate:
+
 - `.github/workflows/current-main-gate.yml`
-- `pull_request` / `push main` 自动执行 unittest
-- `workflow_dispatch` 可触发一轮 current-main release rehearsal（启动实例 + release_check）
+- Pull requests and pushes to `main` run the unittest suite.
+- `workflow_dispatch` can run a current-main release rehearsal.
 
-当前版本边界与已知限制见：`docs/current-main-known-limits.md`
+## Roadmap
 
-环境模板见：
-- `deploy/staging.env.example`
-- `deploy/prod.env.example`
+### v2: Stabilize The Local Delivery Baseline
+
+- Keep the strict main-chain workflow stable from signal intake to retro record.
+- Harden the current runtime entrypoint, restart script, smoke checks, and
+  release checks.
+- Improve the web app shell so operators can complete the workflow without
+  jumping between implementation details.
+- Expand evidence capture for publish checks, invalidation behavior, and retro
+  records.
+- Keep SQLite as the default local store while preserving clear repository and
+  service boundaries.
+- Maintain a small, reviewable CI gate for unit, integration, and release
+  rehearsal checks.
+- Produce English project-facing documentation for external review and GitHub
+  visibility.
+
+### v3: Expand Into A Multi-Source Content Operations Platform
+
+- Add richer source ingestion with configurable providers, schedules, and
+  source health signals.
+- Introduce scoring and prioritization for signals, topics, and content
+  candidates.
+- Extend provider adapters for content generation, image generation, and
+  publishing-support workflows.
+- Add operator dashboards for pipeline status, quality gates, exceptions, and
+  historical performance.
+- Support team-level governance: role boundaries, approvals, audit trails, and
+  release evidence bundles.
+- Prepare deployment profiles beyond the local runtime, while keeping local
+  development reproducible.
+- Add analytics loops so retro records can feed future source selection,
+  scoring, and content planning.
+
+## Further Reading
+
+- Current main operations: `docs/current-main-operations.md`
+- Release checklist: `docs/release-checklist.md`
+- Known limits: `docs/current-main-known-limits.md`
+- Repository boundaries: `docs/repo-boundaries.md`
+- Documentation index: `docs/README.md`
