@@ -1,19 +1,66 @@
-# 文档目录说明
+# Documentation Index
 
-本目录用于存放一期定义、实施方案、边界说明和审计/验收材料，不存放业务代码与运行产物。
+This directory contains phase-one definitions, implementation plans, boundary
+notes, audit materials, operations guidance, release checklists, and known-limit
+documentation.
 
-当前核心文档：
+It should not contain business code or runtime artifacts.
 
-1. `phase1-minimal-system-definition.md`：一期最小系统定义（主链、约束、边界）。
-2. `phase1-implementation-plan.md`：一期实施计划与任务卡顺序。
-3. `repo-boundaries.md`：仓库边界、运行边界与目录职责。
-4. `context-pack-v2.md`：线程接续与上下文压缩应对参考材料。
-5. `current-main-operations.md`：当前主线运行、验活、排障与最小回滚手册。
-6. `release-checklist.md`：当前主线发布前/后检查单。
-7. `current-main-known-limits.md`：当前版本已知限制与口径边界。
+## Core Documents
 
-文档口径要求：
+1. `phase1-minimal-system-definition.md`
+   Phase-one minimal system definition, including the main workflow,
+   constraints, domain objects, and boundaries.
 
-- 主链路统一为“信号 -> 选题 -> 内容版本 -> 图片资产 -> 发布检查记录 -> 复盘记录”。
-- 发布检查固定为强闸门，状态为“通过 / 警告 / 拦截”。
-- `stitch/` 仅为设计输入资产，运行页面仅落在 `app/web/pages/`。
+2. `phase1-implementation-plan.md`
+   Phase-one implementation plan and task-card order.
+
+3. `repo-boundaries.md`
+   Repository boundaries, runtime boundaries, testing boundaries, and directory
+   responsibilities.
+
+4. `context-pack-v2.md`
+   Context continuation and compression reference material.
+
+5. `current-main-operations.md`
+   Current main runtime operations, health checks, troubleshooting, and minimal
+   rollback runbook.
+
+6. `release-checklist.md`
+   Pre-release and post-release checklist for the current main baseline.
+
+7. `current-main-known-limits.md`
+   Known limitations and boundary notes for the current version.
+
+## Documentation Rules
+
+The main workflow must remain consistent:
+
+```text
+Signal -> Topic -> Content Variant -> Image Asset -> Publish Check -> Retro Record
+```
+
+The matching domain model is:
+
+```text
+Signal -> Topic -> ContentVariant -> ImageAsset -> PublishCheck -> RetroRecord
+```
+
+Publish checks are hard gates.
+
+Publish check status values are fixed to:
+
+```text
+PASS / WARN / BLOCK
+```
+
+`stitch/` is for design input assets only.
+
+Runtime web pages must live under:
+
+```text
+app/web/pages/
+```
+
+Runtime databases, logs, local artifacts, and temporary outputs must not be
+committed.

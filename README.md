@@ -1,10 +1,45 @@
 # Traffic Factory v2
 
-Traffic Factory v2 is a local-first content operations system that turns raw
-signals into publishable content packages through a strict, auditable workflow.
-The project is designed around explicit domain boundaries, SQLite-backed
-records, deterministic checks, and small service modules that can be tested
-without a production deployment.
+![CI](https://github.com/Marvinxtuc/Traffic-Factory-V2/actions/workflows/current-main-gate.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+
+Traffic Factory V2 is an open-source, local-first AI workflow infrastructure
+project for content operations, workflow orchestration, and agent-assisted
+publishing.
+
+It helps maintainers and operators transform raw signals into auditable content
+packages through deterministic workflow gates, explicit domain boundaries,
+SQLite-backed records, and testable service modules.
+
+The current baseline focuses on a strict phase-one workflow:
+
+```text
+Signal -> Topic -> Content Variant -> Image Asset -> Publish Check -> Retro Record
+```
+
+The project is designed for maintainability, reproducibility, release
+readiness, and future multi-agent maintainer automation.
+
+Project scope: open-source, local-first, AI workflow infrastructure, content
+operations, workflow orchestration, agent-assisted publishing, maintainer
+automation, and release workflows.
+
+## Why This Project Matters
+
+Modern content operations often depend on scattered prompts, manual review,
+temporary files, and undocumented handoffs.
+
+Traffic Factory V2 turns that process into a reproducible workflow with
+explicit states, persistent records, hard publish gates, and auditable
+transitions.
+
+The project is intentionally local-first so contributors can run, inspect,
+test, and improve the workflow without requiring production infrastructure.
+
+This makes it suitable for experimentation with AI-assisted maintainer
+workflows, release checks, content quality gates, and future multi-agent
+operations.
 
 ## Current Status
 
@@ -12,12 +47,6 @@ The phase-one delivery line is complete and is now in cleanup and release
 hardening. The current target is a deliverable baseline where the core workflow,
 runtime entrypoint, smoke checks, release checks, and rollback documentation are
 all reviewable.
-
-The fixed phase-one workflow is:
-
-```text
-Signal -> Topic -> Content Variant -> Image Asset -> Publish Check -> Retro Record
-```
 
 The matching domain model is:
 
@@ -231,6 +260,37 @@ Minimal CI and pre-release gate:
 - Pull requests and pushes to `main` run the unittest suite.
 - `workflow_dispatch` can run a current-main release rehearsal.
 
+## AI-assisted Maintenance
+
+Traffic Factory V2 is structured to support AI-assisted maintenance workflows.
+
+Potential maintainer automation areas include:
+
+- Pull request review for workflow invariants and boundary violations
+- Issue triage for reproducible bugs and documentation gaps
+- Release checklist validation
+- Security review for workflow gate bypass, unsafe provider adapters, and
+  secret leakage
+- Documentation updates when runtime behavior changes
+- Test generation for service, workflow, API, and release-gate coverage
+
+Codex or other coding agents should follow the repository boundaries, preserve
+the fixed main workflow, and run the validation commands before proposing
+changes.
+
+## For Codex and Coding Agents
+
+Before making changes, coding agents should read:
+
+- `AGENTS.md`
+- `CONTRIBUTING.md`
+- `docs/repo-boundaries.md`
+- `docs/release-checklist.md`
+- `docs/current-main-known-limits.md`
+
+Agent-generated changes should preserve workflow invariants, avoid unrelated
+refactors, and include validation results in the pull request.
+
 ## Roadmap
 
 ### v2: Stabilize The Local Delivery Baseline
@@ -266,6 +326,38 @@ Minimal CI and pre-release gate:
 - Add analytics loops so retro records can feed future source selection,
   scoring, and content planning.
 
+## Repository Governance
+
+The repository is maintained around a small set of explicit rules:
+
+- The phase-one workflow must remain stable and auditable.
+- Main-chain objects must be persisted before downstream steps use them.
+- Publish checks are hard gates.
+- Runtime outputs must stay outside version control.
+- Documentation should be updated when behavior or operations change.
+- Pull requests should include validation evidence.
+
+## Contributing
+
+Contributions are welcome when they preserve the fixed workflow, remain small
+enough to review, and include validation evidence.
+
+Before opening a pull request, please read:
+
+- `CONTRIBUTING.md`
+- `.github/pull_request_template.md`
+- `AGENTS.md`
+
+## Security
+
+Please do not report security vulnerabilities through public GitHub issues.
+
+Security-sensitive areas include workflow gate bypass, publish check bypass,
+SQLite persistence corruption, unsafe provider adapter behavior, secret
+leakage, runtime data exposure, and CI or release-check bypass.
+
+See `SECURITY.md` for responsible disclosure guidance.
+
 ## Further Reading
 
 - Current main operations: `docs/current-main-operations.md`
@@ -273,3 +365,6 @@ Minimal CI and pre-release gate:
 - Known limits: `docs/current-main-known-limits.md`
 - Repository boundaries: `docs/repo-boundaries.md`
 - Documentation index: `docs/README.md`
+- Contributing guide: `CONTRIBUTING.md`
+- Security policy: `SECURITY.md`
+- Codex project instructions: `AGENTS.md`
